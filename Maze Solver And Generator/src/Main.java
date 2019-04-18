@@ -35,7 +35,7 @@ public class Main extends Thread{
 	public void demoMode() throws IOException, InterruptedException {
 		while(true) {
 			String filePath = "generatedMaze.txt";
-			MazeGenerator mazeGenerator = new MazeGenerator(gui, filePath, gui.getMazeSizeMultiplier() * 10 + 1, gui.getMazeSizeMultiplier() * 18 +1);
+			MazeGenerator mazeGenerator = new MazeGenerator(gui, filePath, gui.getMazeSizeMultiplier() * 10 + 1, gui.getMazeSizeMultiplier() * 15 +1);
 			mazeGenerator.DFSgenerate();
 			
 			Maze maze = new Maze(filePath);

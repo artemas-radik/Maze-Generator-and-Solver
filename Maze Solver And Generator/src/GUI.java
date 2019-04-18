@@ -175,10 +175,12 @@ public class GUI extends JPanel implements ActionListener, ChangeListener {
         maze.add(initJComponent("Maze Size Multiplier Slider", new JSlider(JSlider.HORIZONTAL, 1, 20, mazeSizeMultiplier)));
         
         JMenu generation = (JMenu) initJComponent(new JMenu("Generation"));
+        generation.setEnabled(false);
         ButtonGroup buttonGroupForGeneration = new ButtonGroup();
         generation.add(initJComponent(new JRadioButtonMenuItem("DFS Random Generation (Depth-First-Search)", true), buttonGroupForGeneration));
         
         JMenu solve = (JMenu) initJComponent(new JMenu("Solve"));
+        solve.setEnabled(false);
         ButtonGroup buttonGroupForSolve = new ButtonGroup();
         solve.add(initJComponent(new JRadioButtonMenuItem("DFS (Depth-First-Search)", true), buttonGroupForSolve));
         solve.add(initJComponent(new JRadioButtonMenuItem("BFS (Breadth-First-Search)", false), buttonGroupForSolve));
@@ -202,7 +204,12 @@ public class GUI extends JPanel implements ActionListener, ChangeListener {
      * Called when the display space of the frame needs to be reset.
      */
     public void reset() {
-    	setEnabledNonVitalMenus(true);
+    	( (JMenu) mappedJComponents.get("Mode")).setEnabled(true);
+    	( (JMenu) mappedJComponents.get("Maze")).setEnabled(true);
+    	if(mode.equals("Custom Mode")) {
+    		( (JMenu) mappedJComponents.get("Generation")).setEnabled(true);
+    		( (JMenu) mappedJComponents.get("Solve")).setEnabled(true);
+    	}
     	mainThread.suspend();
     	mainThread.stop();
     	maze = null;
@@ -263,10 +270,14 @@ public class GUI extends JPanel implements ActionListener, ChangeListener {
 			
 			case "Demo Mode":
 				this.mode = "Demo Mode";
+				( (JMenu) mappedJComponents.get("Generation")).setEnabled(false);
+				( (JMenu) mappedJComponents.get("Solve")).setEnabled(false);
 				break;
 			
 			case "Custom Mode":
 				this.mode = "Custom Mode";
+				( (JMenu) mappedJComponents.get("Generation")).setEnabled(true);
+				( (JMenu) mappedJComponents.get("Solve")).setEnabled(true);
 				break;
 			
 			case "DFS Random Generation (Depth-First-Search)":
@@ -285,7 +296,10 @@ public class GUI extends JPanel implements ActionListener, ChangeListener {
 				String textState = item.getText();
 				if(textState.equals("Go")) {
 					//Go clicked
-					setEnabledNonVitalMenus(false);
+					( (JMenu) mappedJComponents.get("Maze")).setEnabled(false);
+					( (JMenu) mappedJComponents.get("Mode")).setEnabled(false);
+					( (JMenu) mappedJComponents.get("Generation")).setEnabled(false);
+					( (JMenu) mappedJComponents.get("Solve")).setEnabled(false);
 					item.setText("Stop");
 					mainThread.resume();
 				}
@@ -295,14 +309,6 @@ public class GUI extends JPanel implements ActionListener, ChangeListener {
 					mainThread.suspend();
 				}
 				break;
-		}
-	}
-
-	public void setEnabledNonVitalMenus(boolean enable) {
-		JMenuBar menuBar = (JMenuBar) mappedJComponents.get("Menu Bar");
-		
-		for(int x = 1; x < menuBar.getMenuCount()-1; x++) {
-			menuBar.getMenu(x).setEnabled(enable);
 		}
 	}
 
