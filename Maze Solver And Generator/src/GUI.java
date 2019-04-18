@@ -10,8 +10,6 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 /**
 * The GUI class is responsible for displaying the 
@@ -170,7 +168,7 @@ public class GUI extends JPanel implements ActionListener {
     public void reset() {
     	NavElementID.JMenu_mode.getjComponent().setEnabled(true);
     	NavElementID.JMenu_maze.getjComponent().setEnabled(true);
-    	if(getMode().equals(NavElementID.JRadioButtonMenuItem_customMode)) {
+    	if(getMode().equals(Mode.Custom_Mode)) {
     		NavElementID.JMenu_generation.getjComponent().setEnabled(true);
     		NavElementID.JMenu_solve.getjComponent().setEnabled(true);
     	}

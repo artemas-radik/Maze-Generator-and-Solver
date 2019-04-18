@@ -1,5 +1,5 @@
+import java.awt.Dimension;
 import java.io.IOException;
-import java.util.LinkedList;
 
 /**
 * This main class is responsible for using all the other classes
@@ -28,7 +28,8 @@ public class LogicThread extends Thread{
 	public void demoMode() throws IOException, InterruptedException {
 		while(true) {
 			String filePath = "generatedMaze.txt";
-			MazeGenerator mazeGenerator = new MazeGenerator(Run.getGUI(), filePath, Run.getGUI().getMazeSizeMultiplier() * 10 + 1, Run.getGUI().getMazeSizeMultiplier() * 15 +1);
+			Dimension dimension = getDimension();
+			MazeGenerator mazeGenerator = new MazeGenerator(Run.getGUI(), filePath, (int) dimension.getHeight(), (int) dimension.getWidth());
 			mazeGenerator.DFSgenerate();
 			Maze maze = new Maze(filePath);
 			MazeSolver mazeSolver = new MazeSolver(Run.getGUI(), maze);
@@ -89,6 +90,18 @@ public class LogicThread extends Thread{
 		}
 	}
 	
+	public Dimension getDimension() {
+		double guiWidth = Run.getGUI().getWidth() - 2*GUI.buffer;
+		double guiHeight = Run.getGUI().getHeight()- 2*GUI.buffer;
+		double guiWidthToGuiHeightRatio = guiWidth / guiHeight;
+		
+		int rowsAspectRatio = 10;
+		int colsAspectRatio = (int) Math.round(rowsAspectRatio * guiWidthToGuiHeightRatio);
+		int rows = Run.getGUI().getMazeSizeMultiplier() * rowsAspectRatio + 1;
+		int cols = Run.getGUI().getMazeSizeMultiplier() * colsAspectRatio + 1;
+		return new Dimension(cols, rows);
+	}
+	
 	/**
 	 * This method is called by a new thread of Main once
 	 * the user hits submit on the Control Panel.
@@ -103,7 +116,10 @@ public class LogicThread extends Thread{
 			GenerationAlgorithm generationAlgorithm = Run.getGUI().getGenerationAlgorithm();
 			SolveAlgorithm solveAlgorithm = Run.getGUI().getSolveAlgorithm();
 			String filePath = "generatedMaze.txt";
-			MazeGenerator mazeGenerator = new MazeGenerator(Run.getGUI(), filePath, Run.getGUI().getMazeSizeMultiplier() * 10 + 1, Run.getGUI().getMazeSizeMultiplier() * 15 +1);
+			
+			Dimension dimension = getDimension();
+			
+			MazeGenerator mazeGenerator = new MazeGenerator(Run.getGUI(), filePath, (int) dimension.getHeight(), (int) dimension.getWidth());
 			
 			switch(generationAlgorithm) {
 			
