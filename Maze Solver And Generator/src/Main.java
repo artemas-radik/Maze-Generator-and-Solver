@@ -16,7 +16,7 @@ public class Main extends Thread{
 	
 	private static GUI gui;
 	
-	public static final String[] algorithms = {GUI.SOLVE_ALGORITHM_BFS, GUI.SOLVE_ALGORITHM_DFS};
+	public static final String[] algorithms = {"BFS (Breadth-First-Search)", "DFS (Depth-First-Search)"};
 	
 	 /**
 	   * This is the main method of the program, it starts the Control Panel.
@@ -48,10 +48,10 @@ public class Main extends Thread{
 		int random = (int) (Math.random() * algorithms.length);
 		String algorithm = algorithms[random];
 		
-		if(algorithm.equals(GUI.SOLVE_ALGORITHM_DFS)) {
+		if(algorithm.equals("DFS (Depth-First-Search)")) {
 			mazeSolver.DFS();
 		}
-		else if(algorithm.equals(GUI.SOLVE_ALGORITHM_BFS)) {
+		else if(algorithm.equals("BFS (Breadth-First-Search)")) {
 			mazeSolver.BFS();
 		}
 	}
@@ -68,11 +68,11 @@ public class Main extends Thread{
 	public void run() {
 		try {
 			
-			if(gui.getMode().equals(GUI.DEMO_MODE)) {
+			if(gui.getMode().equals("Demo Mode")) {
 				demoMode();
 			}
 			
-			else if(gui.getMode().equals(GUI.CUSTOM_MODE)) {
+			else if(gui.getMode().equals("Custom Mode")) {
 				startMazeSolving();
 			}
 			
@@ -99,18 +99,18 @@ public class Main extends Thread{
 			String filePath = "generatedMaze.txt";
 			MazeGenerator mazeGenerator = new MazeGenerator(gui, filePath, gui.getMazeSizeMultiplier() * 10 + 1, gui.getMazeSizeMultiplier() * 18 +1);
 			
-			if(generationAlgorithm.equals(GUI.GENERATION_ALGORITHM_DFS_RANDOM)) {
+			if(generationAlgorithm.equals("DFS Random Generation (Depth-First-Search)")) {
 				mazeGenerator.DFSgenerate();
 			}
 			
 			Maze maze = new Maze(filePath);
 			MazeSolver mazeSolver = new MazeSolver(gui, maze);
 			
-			if(solveAlgorithm.equals(GUI.SOLVE_ALGORITHM_DFS)) {
+			if(solveAlgorithm.equals("DFS (Depth-First-Search)")) {
 				mazeSolver.DFS();
 			}
 			
-			else if(solveAlgorithm.equals(GUI.SOLVE_ALGORITHM_BFS)) {
+			else if(solveAlgorithm.equals("BFS (Breadth-First-Search)")) {
 				mazeSolver.BFS();
 			}
 			

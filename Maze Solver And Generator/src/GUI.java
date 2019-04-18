@@ -1,14 +1,11 @@
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
-import java.awt.event.WindowEvent;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
-
+import java.util.HashMap;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
@@ -26,7 +23,7 @@ import javax.swing.event.ChangeListener;
 * @author  AJ Radik and Victoria Vigorito
 * @version 5.0 
 */
-public class GUI extends JPanel implements ActionListener, ItemListener, ChangeListener {
+public class GUI extends JPanel implements ActionListener, ChangeListener {
 	
 	/**
 	 * value={@value title}; This value represents the title of the window
@@ -57,17 +54,17 @@ public class GUI extends JPanel implements ActionListener, ItemListener, ChangeL
 	/**
 	 * The mode set by this GUI.
 	 */
-	private String mode = DEMO_MODE;
+	private String mode = "Demo Mode";
 	
 	/**
 	 * The generation algorithm set by this GUI.
 	 */
-	private String generationAlgorithm = GENERATION_ALGORITHM_DFS_RANDOM;
+	private String generationAlgorithm = "DFS Random Generation (Depth-First-Search)";
 	
 	/**
 	 * The solving algorithm set by this GUI.
 	 */
-	private String solveAlgorithm = SOLVE_ALGORITHM_DFS;
+	private String solveAlgorithm = "DFS (Depth-First-Search)";
 	
 	private int mazeSizeMultiplier = 10;
 	
@@ -85,30 +82,14 @@ public class GUI extends JPanel implements ActionListener, ItemListener, ChangeL
     /**
      * The stop and go button.
      */
-    private JToggleButton go;
-    private JSlider delay;
-    private JMenuBar menuBar;
+  
     private boolean easterEggTriggered = false;
     
     /**
      * Used to tell paintComponent that it is reset time.
      */
     private boolean reset = false;
-    
-    public static final String DEMO_MODE = "DEMO_MODE";
-    public static final String CUSTOM_MODE = "CUSTOM_MODE";
-    public static final String GENERATION_ALGORITHM_DFS_RANDOM = "GENERATION_ALGORITHM_DFS_RANDOM";
-    public static final String SOLVE_ALGORITHM_DFS = "SOLVE_ALGORITHM_DFS";
-    public static final String SOLVE_ALGORITHM_BFS = "SOLVE_ALGORITHM_BFS";
-    
-    public static final String SLIDER_DELAY = "SLIDER_DELAY";
-    public static final String SLIDER_MAZE_SIZE_MULTIPLIER = "SLIDER_MAZE_SIZE_MULTIPLIER";
-    public static final String BUTTON_REAL_TIME = "BUTTON_REAL_TIME";
-    public static final String BUTTON_RESET = "BUTTON_RESET";
-    public static final String BUTTON_NAME_GO_STOP = "GO_STOP";
-    public static final String BUTTON_STOP = "Stop";
-    public static final String BUTTON_GO = "Go";
-    
+
     /**
      * This constructor is called by the Main class,
      * it sets up everything needed in order later draw the maze.
@@ -133,83 +114,84 @@ public class GUI extends JPanel implements ActionListener, ItemListener, ChangeL
        frame.setVisible(true);
     }
     
+    private HashMap<String, JComponent> mappedJComponents = new HashMap<String, JComponent>();
+    
+    public JComponent initJComponent(String name, JComponent jComponent) {
+    	jComponent.setName(name);
+    	
+    	if(jComponent instanceof AbstractButton) {
+    		( (AbstractButton) jComponent).addActionListener(this);
+    	}
+    	
+    	else if(jComponent instanceof JSlider) {
+    		( (JSlider) jComponent).addChangeListener(this);
+    	}
+    	
+    	mappedJComponents.put(name, jComponent);
+    	return jComponent;
+    }
+    
+    public JComponent initJComponent(JComponent jComponent) {
+    	String name = null;
+    	
+    	if(jComponent instanceof AbstractButton) {
+    		name = ( (AbstractButton) jComponent).getText();
+    	}
+    	
+    	else if(jComponent instanceof JLabel) {
+    		name = ( (JLabel) jComponent).getText();
+    	}
+    	
+    	return initJComponent(name, jComponent);
+    }
+    
+    public JComponent initJComponent(JComponent jComponent, ButtonGroup buttonGroup) {
+    	buttonGroup.add( (AbstractButton) jComponent);
+    	return initJComponent(jComponent);
+    }
+    
     /**
      * Draws the menu at the top of the window. Should only be called once.
      */
     public void drawMenu() {
-    	menuBar = new JMenuBar();
-
-        JMenu options = new JMenu("Options");
-        menuBar.add(options);
-        delay = new JSlider(JSlider.HORIZONTAL, 1, 200, 200);
-        delay.addChangeListener(this);
-        delay.setName(SLIDER_DELAY);
-        JLabel delayLabel = new JLabel("Speed");
-        options.add(delayLabel);
-        options.add(delay);
-        JMenuItem realTimeButton = new JMenuItem("Real Time (Seizure Warning)");
-        realTimeButton.setName(BUTTON_REAL_TIME);
-        realTimeButton.addActionListener(this);
-        options.add(realTimeButton);
+    	JMenuBar menuBar = (JMenuBar) initJComponent("Menu Bar", new JMenuBar());
+    	
+        JMenu options = (JMenu) initJComponent(new JMenu("Options"));
+        options.add(initJComponent(new JLabel("Speed")));
+        options.add(initJComponent("Speed Slider", new JSlider(JSlider.HORIZONTAL, 1, 200, 200)));
+		((JSlider) mappedJComponents.get("Speed Slider")).setPreferredSize(new Dimension(460, 16));
+		//Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        options.add(initJComponent(new JMenuItem("Real Time (Seizure Warning)")));
         options.addSeparator();
-        JMenuItem resetButton = new JMenuItem("Reset");
-        resetButton.setName(BUTTON_RESET);
-        resetButton.addActionListener(this);
-        options.add(resetButton);
+        options.add(initJComponent(new JMenuItem("Reset")));
         
-        JMenu mode = new JMenu("Mode");
+        JMenu mode = (JMenu) initJComponent(new JMenu("Mode"));
+        ButtonGroup buttonGroupForMode = new ButtonGroup();
+        mode.add(initJComponent(new JRadioButtonMenuItem("Demo Mode", true), buttonGroupForMode));
+        mode.add(initJComponent(new JRadioButtonMenuItem("Custom Mode", false), buttonGroupForMode));
+        
+        JMenu maze = (JMenu) initJComponent(new JMenu("Maze"));
+        maze.add(initJComponent(new JLabel("Maze Size - WARNING: Large sizes may cause stack overflow!")));
+        maze.add(initJComponent("Maze Size Multiplier Slider", new JSlider(JSlider.HORIZONTAL, 1, 20, mazeSizeMultiplier)));
+        
+        JMenu generation = (JMenu) initJComponent(new JMenu("Generation"));
+        ButtonGroup buttonGroupForGeneration = new ButtonGroup();
+        generation.add(initJComponent(new JRadioButtonMenuItem("DFS Random Generation (Depth-First-Search)", true), buttonGroupForGeneration));
+        
+        JMenu solve = (JMenu) initJComponent(new JMenu("Solve"));
+        ButtonGroup buttonGroupForSolve = new ButtonGroup();
+        solve.add(initJComponent(new JRadioButtonMenuItem("DFS (Depth-First-Search)", true), buttonGroupForSolve));
+        solve.add(initJComponent(new JRadioButtonMenuItem("BFS (Breadth-First-Search)", false), buttonGroupForSolve));
+        
+        JToggleButton go = (JToggleButton) initJComponent(new JToggleButton("Go"));
+        go.registerKeyboardAction(go.getActionForKeyStroke(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0, true)), 
+        		KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0, true), JComponent.WHEN_FOCUSED);
+        
+        menuBar.add(options);
         menuBar.add(mode);
-        ButtonGroup buttonGroupMode = new ButtonGroup();
-        JRadioButtonMenuItem demoMode = new JRadioButtonMenuItem("Demo Mode", true);
-        demoMode.setName(DEMO_MODE);
-        demoMode.addItemListener(this);
-        buttonGroupMode.add(demoMode);
-        mode.add(demoMode);
-        JRadioButtonMenuItem customMode = new JRadioButtonMenuItem("Custom Mode", false);
-        customMode.setName(CUSTOM_MODE);
-        customMode.addItemListener(this);
-        buttonGroupMode.add(customMode);
-        mode.add(customMode);
-        
-        JMenu maze = new JMenu("Maze");
         menuBar.add(maze);
-        JSlider mazeSizeMultiplierSlider = new JSlider(JSlider.HORIZONTAL, 1, 20, mazeSizeMultiplier);
-        mazeSizeMultiplierSlider.addChangeListener(this);
-        mazeSizeMultiplierSlider.setName(SLIDER_MAZE_SIZE_MULTIPLIER);
-        JLabel mazeSizeMultiplierLabel = new JLabel("Maze Size");
-        maze.add(mazeSizeMultiplierLabel);
-        maze.add(mazeSizeMultiplierSlider);
-        
-        JMenu generate = new JMenu("Generate");
-        menuBar.add(generate);
-        ButtonGroup buttonGroupGenerate = new ButtonGroup();
-        JRadioButtonMenuItem dfsRandomGenerate = new JRadioButtonMenuItem("DFS Random Generation (Depth-First-Search)", true);
-        dfsRandomGenerate.setName(GENERATION_ALGORITHM_DFS_RANDOM);
-        dfsRandomGenerate.addItemListener(this);
-        buttonGroupGenerate.add(dfsRandomGenerate);
-        generate.add(dfsRandomGenerate);
-        
-        JMenu solve = new JMenu("Solve");
+        menuBar.add(generation);
         menuBar.add(solve);
-        ButtonGroup buttonGroupSolve = new ButtonGroup();
-        JRadioButtonMenuItem dfs = new JRadioButtonMenuItem("DFS (Depth-First-Search)", true);
-        dfs.setName(SOLVE_ALGORITHM_DFS);
-        dfs.addItemListener(this);
-        buttonGroupSolve.add(dfs);
-        solve.add(dfs);
-        JRadioButtonMenuItem bfs = new JRadioButtonMenuItem("BFS (Breadth-First-Search)", false);
-        bfs.setName(SOLVE_ALGORITHM_BFS);
-        bfs.addItemListener(this);
-        buttonGroupSolve.add(bfs);
-        solve.add(bfs);
-        
-        go = new JToggleButton(BUTTON_GO);
-        go.setName(BUTTON_NAME_GO_STOP);
-        go.addItemListener(this);
-        go.registerKeyboardAction(go.getActionForKeyStroke(
-                KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0, true)),
-                KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0, true),
-                JComponent.WHEN_FOCUSED);
         menuBar.add(go);
         
         frame.setJMenuBar(menuBar);
@@ -225,127 +207,120 @@ public class GUI extends JPanel implements ActionListener, ItemListener, ChangeL
     	mainThread.stop();
     	maze = null;
     	reset = true;
-    	String state = go.getText();
-    	if(state.equals(BUTTON_STOP)) {
-    		go.doClick();
-    	}
+    	makeGoState("Go");
     	repaint();
     	mainThread = new Main();
     	mainThread.start();
     	mainThread.suspend();
     }
 
+    public void makeGoState(String state) {
+    	JToggleButton mockGo = (JToggleButton) mappedJComponents.get("Go");
+    	if(!mockGo.getText().equals(state)) {
+    		mockGo.doClick();
+    	}
+    }
+    
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
-		AbstractButton item = ((AbstractButton) e.getSource());
+		AbstractButton item = (AbstractButton) e.getSource();
 		String name = item.getName();
 		
-		if(name.equals(BUTTON_RESET)) {
-		    reset();
-		}
-		
-		else if(name.equals(BUTTON_REAL_TIME)) {
+		switch(name) {
 			
-			//easter egg
-			if(!easterEggTriggered) {
-				new Thread(new Runnable() {
-				    public void run() {
-				    	try {
-				    		AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("John Williams Duel of the Fates Star Wars Soundtrack.wav").getAbsoluteFile());
-					        Clip clip = AudioSystem.getClip();
-					        clip.open(audioInputStream);
-					        clip.start();
-					        Thread.sleep(clip.getMicrosecondLength()/1000);
-					    } catch(Exception e) {
-					        e.printStackTrace();
+			case "Real Time (Seizure Warning)":
+				//easter egg
+				if(!easterEggTriggered) {
+					makeGoState("Stop");
+					new Thread(new Runnable() {
+					    public void run() {
+					    	try {
+					    		AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("John Williams Duel of the Fates Star Wars Soundtrack.wav").getAbsoluteFile());
+						        Clip clip = AudioSystem.getClip();
+						        clip.open(audioInputStream);
+						        clip.start();
+						        Thread.sleep(clip.getMicrosecondLength()/1000);
+						    } catch(Exception e) {
+						        e.printStackTrace();
+						    }
 					    }
-				    }
-				  }).start();
-				easterEggTriggered = true;
-			}
+					  }).start();
+					easterEggTriggered = true;
+				}
+				
+				if(delayInMilliseconds != 0) {
+			    	delayInMilliseconds = 0;
+			    }
+			    else {
+			    	JSlider speedSlider = (JSlider) mappedJComponents.get("Speed Slider");
+			    	delayInMilliseconds = speedSlider.getMaximum()+1 - speedSlider.getValue();
+			    }
+				break;
 			
-			if(delayInMilliseconds != 0) {
-		    	delayInMilliseconds = 0;
-		    }
-		    else {
-		    	delayInMilliseconds = delay.getMaximum()+1 - delay.getValue();
-		    }
+			case "Reset":
+				reset();
+				break;
+			
+			case "Demo Mode":
+				this.mode = "Demo Mode";
+				break;
+			
+			case "Custom Mode":
+				this.mode = "Custom Mode";
+				break;
+			
+			case "DFS Random Generation (Depth-First-Search)":
+				this.generationAlgorithm = "DFS Random Generation (Depth-First-Search)";
+				break;
+			
+			case "DFS (Depth-First-Search)":
+				this.solveAlgorithm = "DFS (Depth-First-Search)";
+				break;
+			
+			case "BFS (Breadth-First-Search)":
+				this.solveAlgorithm = "BFS (Breadth-First-Search)";
+				break;
+			
+			case "Go":
+				String textState = item.getText();
+				if(textState.equals("Go")) {
+					//Go clicked
+					setEnabledNonVitalMenus(false);
+					item.setText("Stop");
+					mainThread.resume();
+				}
+				else if(textState.equals("Stop")) {
+					//Stop clicked
+					item.setText("Go");
+					mainThread.suspend();
+				}
+				break;
 		}
 	}
 
 	public void setEnabledNonVitalMenus(boolean enable) {
+		JMenuBar menuBar = (JMenuBar) mappedJComponents.get("Menu Bar");
+		
 		for(int x = 1; x < menuBar.getMenuCount()-1; x++) {
 			menuBar.getMenu(x).setEnabled(enable);
 		}
 	}
-	
-	@Override
-	public void itemStateChanged(ItemEvent e) {
-		// TODO Auto-generated method stub
-		AbstractButton item = ((AbstractButton) e.getSource());
-		String name = item.getName();
-		int state = e.getStateChange();
-		
-		if(name.equals(BUTTON_NAME_GO_STOP)) {
-			if(state == ItemEvent.SELECTED) {
-				//Go clicked
-				setEnabledNonVitalMenus(false);
-				item.setText(BUTTON_STOP);
-				mainThread.resume();
-			}
-			else if(state == ItemEvent.DESELECTED) {
-				//Stop clicked
-				item.setText(BUTTON_GO);
-				mainThread.suspend();
-			}
-		}
-		
-		else if(name.equals(DEMO_MODE)) {
-			if(state == ItemEvent.SELECTED) {
-				this.mode = DEMO_MODE;
-			}
-		}
-		
-		else if(name.equals(CUSTOM_MODE)) {
-			if(state == ItemEvent.SELECTED) {
-				this.mode = CUSTOM_MODE;
-			}
-		}
-		
-		else if(name.equals(GENERATION_ALGORITHM_DFS_RANDOM)) {
-			if(state == ItemEvent.SELECTED) {
-				this.generationAlgorithm = GENERATION_ALGORITHM_DFS_RANDOM;
-			}
-		}
-		
-		else if(name.equals(SOLVE_ALGORITHM_DFS)) {
-			if(state == ItemEvent.SELECTED) {
-				this.solveAlgorithm = SOLVE_ALGORITHM_DFS;
-			}
-		}
-		
-		else if(name.equals(SOLVE_ALGORITHM_BFS)) {
-			if(state == ItemEvent.SELECTED) {
-				this.solveAlgorithm = SOLVE_ALGORITHM_BFS;
-			}
-		}
-		
-		
-	}
 
 	@Override
 	public void stateChanged(ChangeEvent e) {
-		JSlider item = ((JSlider) e.getSource());
+		JSlider item = ( (JSlider) e.getSource());
 		String name = item.getName();
 		
-		if(name.equals(SLIDER_DELAY)) {
-			delayInMilliseconds = item.getMaximum()+1 - item.getValue();
-		}
-		
-		else if(name.equals(SLIDER_MAZE_SIZE_MULTIPLIER)) {
-			mazeSizeMultiplier = item.getValue();
-			System.out.println("cke");
+		switch(name) {
+			
+			case "Speed Slider":
+				delayInMilliseconds = item.getMaximum()+1 - item.getValue();
+				break;
+				
+			case "Maze Size Multiplier Slider":
+				mazeSizeMultiplier = item.getValue();
+				break;
+				
 		}
 		
 	}
