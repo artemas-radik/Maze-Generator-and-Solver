@@ -97,7 +97,7 @@ public class Main extends Thread{
 			String generationAlgorithm = gui.getGenerationAlgorithm();
 			String solveAlgorithm = gui.getSolveAlgorithm();
 			String filePath = "generatedMaze.txt";
-			MazeGenerator mazeGenerator = new MazeGenerator(gui, filePath, 101, 161);
+			MazeGenerator mazeGenerator = new MazeGenerator(gui, filePath, gui.getMazeSizeMultiplier() * 10 + 1, gui.getMazeSizeMultiplier() * 18 +1);
 			
 			if(generationAlgorithm.equals(GUI.GENERATION_ALGORITHM_DFS_RANDOM)) {
 				mazeGenerator.DFSgenerate();

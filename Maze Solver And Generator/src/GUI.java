@@ -7,6 +7,11 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
+import java.io.File;
+
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -83,6 +88,7 @@ public class GUI extends JPanel implements ActionListener, ItemListener, ChangeL
     private JToggleButton go;
     private JSlider delay;
     private JMenuBar menuBar;
+    private boolean easterEggTriggered = false;
     
     /**
      * Used to tell paintComponent that it is reset time.
@@ -240,7 +246,26 @@ public class GUI extends JPanel implements ActionListener, ItemListener, ChangeL
 		}
 		
 		else if(name.equals(BUTTON_REAL_TIME)) {
-		    if(delayInMilliseconds != 0) {
+			
+			//easter egg
+			if(!easterEggTriggered) {
+				new Thread(new Runnable() {
+				    public void run() {
+				    	try {
+				    		AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("John Williams Duel of the Fates Star Wars Soundtrack.wav").getAbsoluteFile());
+					        Clip clip = AudioSystem.getClip();
+					        clip.open(audioInputStream);
+					        clip.start();
+					        Thread.sleep(clip.getMicrosecondLength()/1000);
+					    } catch(Exception e) {
+					        e.printStackTrace();
+					    }
+				    }
+				  }).start();
+				easterEggTriggered = true;
+			}
+			
+			if(delayInMilliseconds != 0) {
 		    	delayInMilliseconds = 0;
 		    }
 		    else {
@@ -320,6 +345,7 @@ public class GUI extends JPanel implements ActionListener, ItemListener, ChangeL
 		
 		else if(name.equals(SLIDER_MAZE_SIZE_MULTIPLIER)) {
 			mazeSizeMultiplier = item.getValue();
+			System.out.println("cke");
 		}
 		
 	}
