@@ -26,18 +26,21 @@ public class GUI extends JPanel implements ActionListener {
 	/**
 	 * value={@value title}; This value represents the title of the window
 	 */
-	public static final String title = "The a-MAZE-ing maze solver";
+	public static final String defaultTitle = "The a-MAZE-ing maze solver";
 	
 	/**
 	 * value={@value iconFilePath}; This value represents the file path for the window icon
 	 */
 	public static final String iconFilePath = "square2.png";
 	
+	/**
+	 * value={@value musicFilePath}; This value represents the file path for the duel of the fates easter egg music
+	 */
 	public static final String musicFilePath = "John Williams Duel of the Fates Star Wars Soundtrack.wav";
 	
 	/**
      * value={@value buffer}; This value represents the buffer of space
-     * on all sides of the GUI window in pixels.
+     * on all sides of the GUI window, in pixels.
      */ 
 	public static final int buffer = 6;
 	
@@ -47,7 +50,7 @@ public class GUI extends JPanel implements ActionListener {
 	private Thread currentLogicThread;
 	
 	/**
-	 * This value represents the maze which the GUI is displaying.
+	 * This value represents the maze which the GUI is representing.
 	 */
 	private Maze maze;
 	
@@ -58,21 +61,28 @@ public class GUI extends JPanel implements ActionListener {
     private JFrame frame;
     
     /**
-     * The stop and go button.
+     * Denotes whether easter egg has been triggered. Can only happen once.
      */
-  
     private boolean easterEggTriggered = false;
     
     /**
      * Used to tell paintComponent that it is reset time.
      */
     private boolean reset = false;
+    
+    /**
+     * Denotes whether realTime is currently enabled or not.
+     */
     private boolean realTime = false;
+    
+    /**
+     * LinkedList containing all jComponents within the GUI.
+     */
+    private LinkedList<NavElementID> jComponents = new LinkedList<NavElementID>();
     
     
     /**
-     * This constructor is called by the Main class,
-     * it sets up everything needed in order later draw the maze.
+     * Initializes GUI window.
      * @param maze This is the maze which the GUI
      * will be responsible for displaying.
      */   
@@ -81,7 +91,7 @@ public class GUI extends JPanel implements ActionListener {
        currentLogicThread.start();
        currentLogicThread.suspend();
        frame = new JFrame();
-       frame.setTitle(title);
+       frame.setTitle(defaultTitle);
        ImageIcon icon = new ImageIcon(iconFilePath);
        frame.setIconImage(icon.getImage());
        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -90,12 +100,10 @@ public class GUI extends JPanel implements ActionListener {
        frame.setSize(600, 600);
        frame.setExtendedState(JFrame.MAXIMIZED_BOTH); 
        //frame.setUndecorated(true);
-       
        drawMenu();
        frame.setVisible(true);
     }
     
-    private LinkedList<NavElementID> jComponents = new LinkedList<NavElementID>();
     
     public JComponent initJComponent(NavElementID id) {
     	JComponent jComponent = id.getjComponent();
@@ -167,6 +175,7 @@ public class GUI extends JPanel implements ActionListener {
      * Called when the display space of the frame needs to be reset.
      */
     public void reset() {
+    	frame.setTitle(defaultTitle);
     	NavElementID.JMenu_mode.getjComponent().setEnabled(true);
     	NavElementID.JMenu_maze.getjComponent().setEnabled(true);
     	if(getMode().equals(Mode.Custom_Mode)) {
@@ -177,20 +186,48 @@ public class GUI extends JPanel implements ActionListener {
     	currentLogicThread.stop();
     	maze = null;
     	reset = true;
-    	makeGoState("Go");
+    	makeGoState(false);
     	repaint();
     	currentLogicThread = new LogicThread();
     	currentLogicThread.start();
     	currentLogicThread.suspend();
     }
 
-    public void makeGoState(String state) {
+    /**
+     * Sets the state of the "Go" button.
+     * true makes the go button be clicked as if you clicked go.
+     * false makes the go button be clicked as if you clicked stop.
+     * @param state what state to set the button to
+     */
+    public void makeGoState(Boolean state) {
+    	//false = disable it
+    	//true = enable it
     	JToggleButton mockGo = (JToggleButton) NavElementID.JToggleButton_go.getjComponent();
-    	if(!mockGo.getText().equals(state)) {
-    		mockGo.doClick();
+    	if(mockGo.getText().equals("Stop")) {
+    		if(state) {
+    			return;
+    		}
+    		else if(!state) {
+    			mockGo.doClick();
+    			return;
+    		}
+    	}
+    	else if(mockGo.getText().equals("Go")) {
+    		if(state) {
+    			mockGo.doClick();;
+    			return;
+    		}
+    		else if(!state) {
+    			return;
+    		}
     	}
     }
     
+    /**
+     * Fetches the NavElementID enum based on the JComponent.
+     * @param jComponent The JComponent to fetch the NavElementID from.
+     * @return the NavElementID associated with the JComponent.
+     */
     public NavElementID getNavElementIDfromJComponent(JComponent jComponent) {
     	for(NavElementID navElementID : jComponents) {
     		if(navElementID.getjComponent().equals(jComponent)) {
@@ -200,6 +237,10 @@ public class GUI extends JPanel implements ActionListener {
     	return null;
     }
     
+    /**
+     * Handles actions on nav items.
+     * @param e The ActionEvent to be handled
+     */
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		AbstractButton source = (AbstractButton) e.getSource();
@@ -210,7 +251,7 @@ public class GUI extends JPanel implements ActionListener {
 			case JMenuItem_realTime:
 				//easter egg
 				if(!easterEggTriggered) {
-					makeGoState("Stop");
+					makeGoState(true);
 					new Thread(new Runnable() {
 					    public void run() {
 					    	try {

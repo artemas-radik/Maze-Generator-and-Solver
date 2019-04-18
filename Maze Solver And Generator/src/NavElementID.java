@@ -14,7 +14,7 @@ public enum NavElementID {
 	JMenu_options(new JMenu("Options")),
 	JLabel_speed(new JLabel("Speed")),
 	JSlider_speed(new JSlider(JSlider.HORIZONTAL, 1, 200, 200)),
-	JMenuItem_realTime(new JMenuItem("Real Time (Seizure Warning)")),
+	JMenuItem_realTime(new JMenuItem("Real Time (Seizure Warning) - Enable/Disable")),
 	JMenuItem_reset(new JMenuItem("Reset")),
 	
 	JMenu_mode(new JMenu("Mode")),

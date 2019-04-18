@@ -61,7 +61,7 @@ public class MazeSolver {
 	 * @see InterruptedException
 	 */
 	public LinkedList<Node> DFS() throws InterruptedException {
-		gui.getFrame().setTitle(GUI.title+" - DFS");
+		gui.getFrame().setTitle(GUI.defaultTitle+" - DFS");
 		Node startNode = getStartNode(maze.getNodes());
 		DFSrecursive(startNode, maze.getNodes()); // Return of node not needed?
 		return getResultPath();
@@ -131,7 +131,7 @@ public class MazeSolver {
 	 * @see InterruptedException
 	 */
 	public LinkedList<Node> BFS() throws InterruptedException {
-		gui.getFrame().setTitle(GUI.title+" - BFS");
+		gui.getFrame().setTitle(GUI.defaultTitle+" - BFS");
 		Node[][] nodes = maze.getNodes();
 		LinkedList<Node> queue = new LinkedList<Node>();
 		Node startNode = getStartNode(nodes);

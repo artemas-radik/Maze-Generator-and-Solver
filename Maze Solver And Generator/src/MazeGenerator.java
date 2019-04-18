@@ -40,7 +40,7 @@ public class MazeGenerator {
 	}
 	
 	public void DFSgenerate() throws IOException, InterruptedException {
-		gui.getFrame().setTitle(GUI.title+" - DFS Random Generation");
+		gui.getFrame().setTitle(GUI.defaultTitle+" - DFS Random Generation");
 		DFSgenerateRecursive(startNode, nodes);
 		startNode.setState(Node.startNode);
 		setEndNode(nodes);
