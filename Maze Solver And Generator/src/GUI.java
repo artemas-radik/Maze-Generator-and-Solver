@@ -49,11 +49,6 @@ public class GUI extends JPanel implements ActionListener {
 	private Thread currentLogicThread;
 	
 	/**
-	 * The delay in milliseconds set by this GUI.
-	 */
-	private int delayInMilliseconds = 1;
-	
-	/**
 	 * This value represents the maze which the GUI is displaying.
 	 */
 	private Maze maze;
@@ -74,7 +69,7 @@ public class GUI extends JPanel implements ActionListener {
      * Used to tell paintComponent that it is reset time.
      */
     private boolean reset = false;
-    
+    private boolean realTime = false;
     
     
     /**
@@ -233,12 +228,15 @@ public class GUI extends JPanel implements ActionListener {
 					easterEggTriggered = true;
 				}
 				
-				if(delayInMilliseconds != 0) {
-			    	delayInMilliseconds = 0;
+				JSlider speedSlider = (JSlider) NavElementID.JSlider_speed.getjComponent();
+				
+				if(!realTime) {
+					speedSlider.setEnabled(false);
+					realTime = true;
 			    }
-			    else {
-			    	JSlider speedSlider = (JSlider) NavElementID.JSlider_speed.getjComponent();
-			    	delayInMilliseconds = speedSlider.getMaximum()+1 - speedSlider.getValue();
+			    else if(realTime){
+			    	speedSlider.setEnabled(true);
+			    	realTime = false;
 			    }
 				break;
 			
@@ -345,9 +343,20 @@ public class GUI extends JPanel implements ActionListener {
 	}
 	
 	public int getDelayInMilliseconds() {
-		return delayInMilliseconds;
+		
+		if(realTime == true) {
+			return 0;
+		}
+		
+		JSlider slider = (JSlider) NavElementID.JSlider_speed.getjComponent();
+		return slider.getMaximum() + 1 - slider.getValue();
 	}
 
+	public void setDelayInMilliseconds(int milliseconds) {
+		JSlider slider = (JSlider) NavElementID.JSlider_mazeSizeMultiplier.getjComponent();
+		slider.setValue(slider.getMaximum() + 1 - milliseconds);
+	}
+	
 	public NavElementID getSelectedNavElementIDinMenu(NavElementID menuNavElementID) {
 		JMenu menu = (JMenu) menuNavElementID.getjComponent();
 		
@@ -362,16 +371,19 @@ public class GUI extends JPanel implements ActionListener {
 		return null;
 	}
 	
-	public NavElementID getMode() {
-		return getSelectedNavElementIDinMenu(NavElementID.JMenu_mode);
+	public Mode getMode() {
+		NavElementID selected = getSelectedNavElementIDinMenu(NavElementID.JMenu_mode);
+		return (Mode) selected.getConfigurationData();
 	}
 
-	public NavElementID getGenerationAlgorithm() {
-		return getSelectedNavElementIDinMenu(NavElementID.JMenu_generation);
+	public GenerationAlgorithm getGenerationAlgorithm() {
+		NavElementID selected = getSelectedNavElementIDinMenu(NavElementID.JMenu_generation);
+		return (GenerationAlgorithm) selected.getConfigurationData();
 	}
 
-	public NavElementID getSolveAlgorithm() {
-		return getSelectedNavElementIDinMenu(NavElementID.JMenu_solve);
+	public SolveAlgorithm getSolveAlgorithm() {
+		NavElementID selected = getSelectedNavElementIDinMenu(NavElementID.JMenu_solve);
+		return (SolveAlgorithm) selected.getConfigurationData();
 	}
 
 	public int getMazeSizeMultiplier() {

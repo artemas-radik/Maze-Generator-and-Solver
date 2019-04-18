@@ -15,7 +15,7 @@ import java.util.LinkedList;
 public class LogicThread extends Thread{
 	
 	
-	public static final NavElementID[] algorithms = {NavElementID.JRadioButtonMenuItem_dfsSolve, NavElementID.JRadioButtonMenuItem_bfsSolve};
+	public static final SolveAlgorithm[] algorithms = {SolveAlgorithm.DFS, SolveAlgorithm.BFS};
 	
 	 /**
 	   * This is the main method of the program, it starts the Control Panel.
@@ -38,15 +38,15 @@ public class LogicThread extends Thread{
 	
 	public void activateWithRandomAlgorithm(MazeSolver mazeSolver) throws InterruptedException {
 		int random = (int) (Math.random() * algorithms.length);
-		NavElementID solveAlgorithm = algorithms[random];
+		SolveAlgorithm solveAlgorithm = algorithms[random];
 		
 		switch(solveAlgorithm) {
 		
-			case JRadioButtonMenuItem_dfsSolve:
+			case DFS:
 				mazeSolver.DFS();
 				break;
 			
-			case JRadioButtonMenuItem_bfsSolve:
+			case BFS:
 				mazeSolver.BFS();
 				break;
 				
@@ -66,15 +66,15 @@ public class LogicThread extends Thread{
 	@Override
 	public void run() {
 		try {
-			NavElementID mode = Run.getGUI().getMode();
+			Mode mode = Run.getGUI().getMode();
 			
 			switch(mode) {
 			
-				case JRadioButtonMenuItem_demoMode:
+				case Demo_Mode:
 					demoMode();
 					break;
 				
-				case JRadioButtonMenuItem_customMode:
+				case Custom_Mode:
 					startMazeSolving();
 					break;
 				
@@ -100,14 +100,14 @@ public class LogicThread extends Thread{
 	 */
 	public void startMazeSolving() throws IOException, InterruptedException {
 		while(true) {
-			NavElementID generationAlgorithm = Run.getGUI().getGenerationAlgorithm();
-			NavElementID solveAlgorithm = Run.getGUI().getSolveAlgorithm();
+			GenerationAlgorithm generationAlgorithm = Run.getGUI().getGenerationAlgorithm();
+			SolveAlgorithm solveAlgorithm = Run.getGUI().getSolveAlgorithm();
 			String filePath = "generatedMaze.txt";
 			MazeGenerator mazeGenerator = new MazeGenerator(Run.getGUI(), filePath, Run.getGUI().getMazeSizeMultiplier() * 10 + 1, Run.getGUI().getMazeSizeMultiplier() * 15 +1);
 			
 			switch(generationAlgorithm) {
 			
-				case JRadioButtonMenuItem_dfsRandomGeneration:
+				case DFS_random:
 					mazeGenerator.DFSgenerate();
 					break;
 				
@@ -120,11 +120,11 @@ public class LogicThread extends Thread{
 			
 			switch(solveAlgorithm) {
 			
-				case JRadioButtonMenuItem_dfsSolve:
+				case DFS:
 					mazeSolver.DFS();
 					break;
 				
-				case JRadioButtonMenuItem_bfsSolve:
+				case BFS:
 					mazeSolver.BFS();
 					break;
 					
