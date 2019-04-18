@@ -12,11 +12,10 @@ import java.util.LinkedList;
 * @author  AJ Radik and Victoria Vigorito
 * @version 5.0 
 */
-public class Main extends Thread{
+public class LogicThread extends Thread{
 	
-	private static GUI gui;
 	
-	public static final String[] algorithms = {"BFS (Breadth-First-Search)", "DFS (Depth-First-Search)"};
+	public static final NavElementID[] algorithms = {NavElementID.JRadioButtonMenuItem_dfsSolve, NavElementID.JRadioButtonMenuItem_bfsSolve};
 	
 	 /**
 	   * This is the main method of the program, it starts the Control Panel.
@@ -25,34 +24,34 @@ public class Main extends Thread{
 	   * @throws IOException file I/O
 	   * @see InterruptedException
 	   */
-	public static void main(String[] args) throws InterruptedException, IOException {
-		
-		gui = new GUI();
-		
-		//ControlPanel.runControlPanel();;
-	}
 	
 	public void demoMode() throws IOException, InterruptedException {
 		while(true) {
 			String filePath = "generatedMaze.txt";
-			MazeGenerator mazeGenerator = new MazeGenerator(gui, filePath, gui.getMazeSizeMultiplier() * 10 + 1, gui.getMazeSizeMultiplier() * 15 +1);
+			MazeGenerator mazeGenerator = new MazeGenerator(Run.getGUI(), filePath, Run.getGUI().getMazeSizeMultiplier() * 10 + 1, Run.getGUI().getMazeSizeMultiplier() * 15 +1);
 			mazeGenerator.DFSgenerate();
-			
 			Maze maze = new Maze(filePath);
-			MazeSolver mazeSolver = new MazeSolver(gui, maze);
+			MazeSolver mazeSolver = new MazeSolver(Run.getGUI(), maze);
 			activateWithRandomAlgorithm(mazeSolver);
 		}
 	}
 	
 	public void activateWithRandomAlgorithm(MazeSolver mazeSolver) throws InterruptedException {
 		int random = (int) (Math.random() * algorithms.length);
-		String algorithm = algorithms[random];
+		NavElementID solveAlgorithm = algorithms[random];
 		
-		if(algorithm.equals("DFS (Depth-First-Search)")) {
-			mazeSolver.DFS();
-		}
-		else if(algorithm.equals("BFS (Breadth-First-Search)")) {
-			mazeSolver.BFS();
+		switch(solveAlgorithm) {
+		
+			case JRadioButtonMenuItem_dfsSolve:
+				mazeSolver.DFS();
+				break;
+			
+			case JRadioButtonMenuItem_bfsSolve:
+				mazeSolver.BFS();
+				break;
+				
+			default:
+				break;
 		}
 	}
 	
@@ -67,14 +66,21 @@ public class Main extends Thread{
 	@Override
 	public void run() {
 		try {
+			NavElementID mode = Run.getGUI().getMode();
 			
-			if(gui.getMode().equals("Demo Mode")) {
-				demoMode();
-			}
+			switch(mode) {
 			
-			else if(gui.getMode().equals("Custom Mode")) {
-				startMazeSolving();
-			}
+				case JRadioButtonMenuItem_demoMode:
+					demoMode();
+					break;
+				
+				case JRadioButtonMenuItem_customMode:
+					startMazeSolving();
+					break;
+				
+			default:
+				break;
+			}			
 			
 			//startMazeSolving();
 		} catch (InterruptedException | IOException e) {
@@ -94,24 +100,36 @@ public class Main extends Thread{
 	 */
 	public void startMazeSolving() throws IOException, InterruptedException {
 		while(true) {
-			String generationAlgorithm = gui.getGenerationAlgorithm();
-			String solveAlgorithm = gui.getSolveAlgorithm();
+			NavElementID generationAlgorithm = Run.getGUI().getGenerationAlgorithm();
+			NavElementID solveAlgorithm = Run.getGUI().getSolveAlgorithm();
 			String filePath = "generatedMaze.txt";
-			MazeGenerator mazeGenerator = new MazeGenerator(gui, filePath, gui.getMazeSizeMultiplier() * 10 + 1, gui.getMazeSizeMultiplier() * 18 +1);
+			MazeGenerator mazeGenerator = new MazeGenerator(Run.getGUI(), filePath, Run.getGUI().getMazeSizeMultiplier() * 10 + 1, Run.getGUI().getMazeSizeMultiplier() * 15 +1);
 			
-			if(generationAlgorithm.equals("DFS Random Generation (Depth-First-Search)")) {
-				mazeGenerator.DFSgenerate();
+			switch(generationAlgorithm) {
+			
+				case JRadioButtonMenuItem_dfsRandomGeneration:
+					mazeGenerator.DFSgenerate();
+					break;
+				
+				default:
+					break;
 			}
 			
 			Maze maze = new Maze(filePath);
-			MazeSolver mazeSolver = new MazeSolver(gui, maze);
+			MazeSolver mazeSolver = new MazeSolver(Run.getGUI(), maze);
 			
-			if(solveAlgorithm.equals("DFS (Depth-First-Search)")) {
-				mazeSolver.DFS();
-			}
+			switch(solveAlgorithm) {
 			
-			else if(solveAlgorithm.equals("BFS (Breadth-First-Search)")) {
-				mazeSolver.BFS();
+				case JRadioButtonMenuItem_dfsSolve:
+					mazeSolver.DFS();
+					break;
+				
+				case JRadioButtonMenuItem_bfsSolve:
+					mazeSolver.BFS();
+					break;
+					
+				default:
+					break;
 			}
 			
 		}

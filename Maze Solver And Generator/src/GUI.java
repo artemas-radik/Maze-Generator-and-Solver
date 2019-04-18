@@ -5,7 +5,7 @@ import java.awt.event.KeyEvent;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
-import java.util.HashMap;
+import java.util.LinkedList;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
@@ -23,7 +23,7 @@ import javax.swing.event.ChangeListener;
 * @author  AJ Radik and Victoria Vigorito
 * @version 5.0 
 */
-public class GUI extends JPanel implements ActionListener, ChangeListener {
+public class GUI extends JPanel implements ActionListener {
 	
 	/**
 	 * value={@value title}; This value represents the title of the window
@@ -35,6 +35,8 @@ public class GUI extends JPanel implements ActionListener, ChangeListener {
 	 */
 	public static final String iconFilePath = "square2.png";
 	
+	public static final String musicFilePath = "John Williams Duel of the Fates Star Wars Soundtrack.wav";
+	
 	/**
      * value={@value buffer}; This value represents the buffer of space
      * on all sides of the GUI window in pixels.
@@ -44,29 +46,12 @@ public class GUI extends JPanel implements ActionListener, ChangeListener {
 	/**
 	 * The current logical thread that this GUI is representing
 	 */
-	private Thread mainThread;
+	private Thread currentLogicThread;
 	
 	/**
 	 * The delay in milliseconds set by this GUI.
 	 */
 	private int delayInMilliseconds = 1;
-	
-	/**
-	 * The mode set by this GUI.
-	 */
-	private String mode = "Demo Mode";
-	
-	/**
-	 * The generation algorithm set by this GUI.
-	 */
-	private String generationAlgorithm = "DFS Random Generation (Depth-First-Search)";
-	
-	/**
-	 * The solving algorithm set by this GUI.
-	 */
-	private String solveAlgorithm = "DFS (Depth-First-Search)";
-	
-	private int mazeSizeMultiplier = 10;
 	
 	/**
 	 * This value represents the maze which the GUI is displaying.
@@ -89,7 +74,9 @@ public class GUI extends JPanel implements ActionListener, ChangeListener {
      * Used to tell paintComponent that it is reset time.
      */
     private boolean reset = false;
-
+    
+    
+    
     /**
      * This constructor is called by the Main class,
      * it sets up everything needed in order later draw the maze.
@@ -97,9 +84,9 @@ public class GUI extends JPanel implements ActionListener, ChangeListener {
      * will be responsible for displaying.
      */   
     public GUI() {
-       mainThread = new Main();
-       mainThread.start();
-       mainThread.suspend();
+       currentLogicThread = new LogicThread();
+       currentLogicThread.start();
+       currentLogicThread.suspend();
        frame = new JFrame();
        frame.setTitle(title);
        ImageIcon icon = new ImageIcon(iconFilePath);
@@ -114,80 +101,62 @@ public class GUI extends JPanel implements ActionListener, ChangeListener {
        frame.setVisible(true);
     }
     
-    private HashMap<String, JComponent> mappedJComponents = new HashMap<String, JComponent>();
+    private LinkedList<NavElementID> jComponents = new LinkedList<NavElementID>();
     
-    public JComponent initJComponent(String name, JComponent jComponent) {
-    	jComponent.setName(name);
+    public JComponent initJComponent(NavElementID id) {
+    	JComponent jComponent = id.getjComponent();
     	
     	if(jComponent instanceof AbstractButton) {
     		( (AbstractButton) jComponent).addActionListener(this);
     	}
     	
-    	else if(jComponent instanceof JSlider) {
-    		( (JSlider) jComponent).addChangeListener(this);
-    	}
-    	
-    	mappedJComponents.put(name, jComponent);
+    	jComponents.add(id);
     	return jComponent;
     }
     
-    public JComponent initJComponent(JComponent jComponent) {
-    	String name = null;
-    	
-    	if(jComponent instanceof AbstractButton) {
-    		name = ( (AbstractButton) jComponent).getText();
-    	}
-    	
-    	else if(jComponent instanceof JLabel) {
-    		name = ( (JLabel) jComponent).getText();
-    	}
-    	
-    	return initJComponent(name, jComponent);
-    }
-    
-    public JComponent initJComponent(JComponent jComponent, ButtonGroup buttonGroup) {
+    public JComponent initJComponent(NavElementID id, ButtonGroup buttonGroup) {
+    	JComponent jComponent = id.getjComponent();
     	buttonGroup.add( (AbstractButton) jComponent);
-    	return initJComponent(jComponent);
+    	return initJComponent(id);
     }
     
     /**
      * Draws the menu at the top of the window. Should only be called once.
      */
     public void drawMenu() {
-    	JMenuBar menuBar = (JMenuBar) initJComponent("Menu Bar", new JMenuBar());
+    	JMenuBar menuBar = (JMenuBar) initJComponent(NavElementID.JMenuBar_menuBar);
     	
-        JMenu options = (JMenu) initJComponent(new JMenu("Options"));
-        options.add(initJComponent(new JLabel("Speed")));
-        options.add(initJComponent("Speed Slider", new JSlider(JSlider.HORIZONTAL, 1, 200, 200)));
-		((JSlider) mappedJComponents.get("Speed Slider")).setPreferredSize(new Dimension(460, 16));
+        JMenu options = (JMenu) initJComponent(NavElementID.JMenu_options);
+        options.add(initJComponent(NavElementID.JLabel_speed));
+        options.add(initJComponent(NavElementID.JSlider_speed));
+		NavElementID.JSlider_speed.getjComponent().setPreferredSize(new Dimension(460, 16));
 		//Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        options.add(initJComponent(new JMenuItem("Real Time (Seizure Warning)")));
+        options.add(initJComponent(NavElementID.JMenuItem_realTime));
         options.addSeparator();
-        options.add(initJComponent(new JMenuItem("Reset")));
+        options.add(initJComponent(NavElementID.JMenuItem_reset));
         
-        JMenu mode = (JMenu) initJComponent(new JMenu("Mode"));
+        JMenu mode = (JMenu) initJComponent(NavElementID.JMenu_mode);
         ButtonGroup buttonGroupForMode = new ButtonGroup();
-        mode.add(initJComponent(new JRadioButtonMenuItem("Demo Mode", true), buttonGroupForMode));
-        mode.add(initJComponent(new JRadioButtonMenuItem("Custom Mode", false), buttonGroupForMode));
+        mode.add(initJComponent(NavElementID.JRadioButtonMenuItem_demoMode, buttonGroupForMode));
+        mode.add(initJComponent(NavElementID.JRadioButtonMenuItem_customMode, buttonGroupForMode));
         
-        JMenu maze = (JMenu) initJComponent(new JMenu("Maze"));
-        maze.add(initJComponent(new JLabel("Maze Size - WARNING: Large sizes may cause stack overflow!")));
-        maze.add(initJComponent("Maze Size Multiplier Slider", new JSlider(JSlider.HORIZONTAL, 1, 20, mazeSizeMultiplier)));
+        JMenu maze = (JMenu) initJComponent(NavElementID.JMenu_maze);
+        maze.add(initJComponent(NavElementID.JLabel_mazeSize));
+        maze.add(initJComponent(NavElementID.JSlider_mazeSizeMultiplier));
         
-        JMenu generation = (JMenu) initJComponent(new JMenu("Generation"));
+        JMenu generation = (JMenu) initJComponent(NavElementID.JMenu_generation);
         generation.setEnabled(false);
         ButtonGroup buttonGroupForGeneration = new ButtonGroup();
-        generation.add(initJComponent(new JRadioButtonMenuItem("DFS Random Generation (Depth-First-Search)", true), buttonGroupForGeneration));
+        generation.add(initJComponent(NavElementID.JRadioButtonMenuItem_dfsRandomGeneration, buttonGroupForGeneration));
         
-        JMenu solve = (JMenu) initJComponent(new JMenu("Solve"));
+        JMenu solve = (JMenu) initJComponent(NavElementID.JMenu_solve);
         solve.setEnabled(false);
         ButtonGroup buttonGroupForSolve = new ButtonGroup();
-        solve.add(initJComponent(new JRadioButtonMenuItem("DFS (Depth-First-Search)", true), buttonGroupForSolve));
-        solve.add(initJComponent(new JRadioButtonMenuItem("BFS (Breadth-First-Search)", false), buttonGroupForSolve));
+        solve.add(initJComponent(NavElementID.JRadioButtonMenuItem_dfsSolve, buttonGroupForSolve));
+        solve.add(initJComponent(NavElementID.JRadioButtonMenuItem_bfsSolve, buttonGroupForSolve));
         
-        JToggleButton go = (JToggleButton) initJComponent(new JToggleButton("Go"));
-        go.registerKeyboardAction(go.getActionForKeyStroke(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0, true)), 
-        		KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0, true), JComponent.WHEN_FOCUSED);
+        JToggleButton go = (JToggleButton) initJComponent(NavElementID.JToggleButton_go);
+        go.registerKeyboardAction(go.getActionForKeyStroke(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0, true)), KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0, true), JComponent.WHEN_FOCUSED);
         
         menuBar.add(options);
         menuBar.add(mode);
@@ -204,45 +173,54 @@ public class GUI extends JPanel implements ActionListener, ChangeListener {
      * Called when the display space of the frame needs to be reset.
      */
     public void reset() {
-    	( (JMenu) mappedJComponents.get("Mode")).setEnabled(true);
-    	( (JMenu) mappedJComponents.get("Maze")).setEnabled(true);
-    	if(mode.equals("Custom Mode")) {
-    		( (JMenu) mappedJComponents.get("Generation")).setEnabled(true);
-    		( (JMenu) mappedJComponents.get("Solve")).setEnabled(true);
+    	NavElementID.JMenu_mode.getjComponent().setEnabled(true);
+    	NavElementID.JMenu_maze.getjComponent().setEnabled(true);
+    	if(getMode().equals(NavElementID.JRadioButtonMenuItem_customMode)) {
+    		NavElementID.JMenu_generation.getjComponent().setEnabled(true);
+    		NavElementID.JMenu_solve.getjComponent().setEnabled(true);
     	}
-    	mainThread.suspend();
-    	mainThread.stop();
+    	currentLogicThread.suspend();
+    	currentLogicThread.stop();
     	maze = null;
     	reset = true;
     	makeGoState("Go");
     	repaint();
-    	mainThread = new Main();
-    	mainThread.start();
-    	mainThread.suspend();
+    	currentLogicThread = new LogicThread();
+    	currentLogicThread.start();
+    	currentLogicThread.suspend();
     }
 
     public void makeGoState(String state) {
-    	JToggleButton mockGo = (JToggleButton) mappedJComponents.get("Go");
+    	JToggleButton mockGo = (JToggleButton) NavElementID.JToggleButton_go.getjComponent();
     	if(!mockGo.getText().equals(state)) {
     		mockGo.doClick();
     	}
     }
     
+    public NavElementID getNavElementIDfromJComponent(JComponent jComponent) {
+    	for(NavElementID navElementID : jComponents) {
+    		if(navElementID.getjComponent().equals(jComponent)) {
+    			return navElementID;
+    		}
+    	}
+    	return null;
+    }
+    
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		AbstractButton item = (AbstractButton) e.getSource();
-		String name = item.getName();
-		
-		switch(name) {
+		AbstractButton source = (AbstractButton) e.getSource();
+		NavElementID navElementID = getNavElementIDfromJComponent(source);
+		//unqualified vs qualified enums
+		switch(navElementID) {
 			
-			case "Real Time (Seizure Warning)":
+			case JMenuItem_realTime:
 				//easter egg
 				if(!easterEggTriggered) {
 					makeGoState("Stop");
 					new Thread(new Runnable() {
 					    public void run() {
 					    	try {
-					    		AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("John Williams Duel of the Fates Star Wars Soundtrack.wav").getAbsoluteFile());
+					    		AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(musicFilePath).getAbsoluteFile());
 						        Clip clip = AudioSystem.getClip();
 						        clip.open(audioInputStream);
 						        clip.start();
@@ -259,76 +237,46 @@ public class GUI extends JPanel implements ActionListener, ChangeListener {
 			    	delayInMilliseconds = 0;
 			    }
 			    else {
-			    	JSlider speedSlider = (JSlider) mappedJComponents.get("Speed Slider");
+			    	JSlider speedSlider = (JSlider) NavElementID.JSlider_speed.getjComponent();
 			    	delayInMilliseconds = speedSlider.getMaximum()+1 - speedSlider.getValue();
 			    }
 				break;
 			
-			case "Reset":
+			case JMenuItem_reset:
 				reset();
 				break;
 			
-			case "Demo Mode":
-				this.mode = "Demo Mode";
-				( (JMenu) mappedJComponents.get("Generation")).setEnabled(false);
-				( (JMenu) mappedJComponents.get("Solve")).setEnabled(false);
+			case JRadioButtonMenuItem_demoMode:
+				NavElementID.JMenu_generation.getjComponent().setEnabled(false);
+				NavElementID.JMenu_solve.getjComponent().setEnabled(false);
 				break;
 			
-			case "Custom Mode":
-				this.mode = "Custom Mode";
-				( (JMenu) mappedJComponents.get("Generation")).setEnabled(true);
-				( (JMenu) mappedJComponents.get("Solve")).setEnabled(true);
+			case JRadioButtonMenuItem_customMode:
+				NavElementID.JMenu_generation.getjComponent().setEnabled(true);
+				NavElementID.JMenu_solve.getjComponent().setEnabled(true);
 				break;
 			
-			case "DFS Random Generation (Depth-First-Search)":
-				this.generationAlgorithm = "DFS Random Generation (Depth-First-Search)";
-				break;
-			
-			case "DFS (Depth-First-Search)":
-				this.solveAlgorithm = "DFS (Depth-First-Search)";
-				break;
-			
-			case "BFS (Breadth-First-Search)":
-				this.solveAlgorithm = "BFS (Breadth-First-Search)";
-				break;
-			
-			case "Go":
-				String textState = item.getText();
+			case JToggleButton_go:
+				String textState = source.getText();
 				if(textState.equals("Go")) {
 					//Go clicked
-					( (JMenu) mappedJComponents.get("Maze")).setEnabled(false);
-					( (JMenu) mappedJComponents.get("Mode")).setEnabled(false);
-					( (JMenu) mappedJComponents.get("Generation")).setEnabled(false);
-					( (JMenu) mappedJComponents.get("Solve")).setEnabled(false);
-					item.setText("Stop");
-					mainThread.resume();
+					NavElementID.JMenu_maze.getjComponent().setEnabled(false);
+					NavElementID.JMenu_mode.getjComponent().setEnabled(false);
+					NavElementID.JMenu_generation.getjComponent().setEnabled(false);
+					NavElementID.JMenu_solve.getjComponent().setEnabled(false);
+					source.setText("Stop");
+					currentLogicThread.resume();
 				}
 				else if(textState.equals("Stop")) {
 					//Stop clicked
-					item.setText("Go");
-					mainThread.suspend();
+					source.setText("Go");
+					currentLogicThread.suspend();
 				}
 				break;
-		}
-	}
-
-	@Override
-	public void stateChanged(ChangeEvent e) {
-		JSlider item = ( (JSlider) e.getSource());
-		String name = item.getName();
-		
-		switch(name) {
 			
-			case "Speed Slider":
-				delayInMilliseconds = item.getMaximum()+1 - item.getValue();
+			default:
 				break;
-				
-			case "Maze Size Multiplier Slider":
-				mazeSizeMultiplier = item.getValue();
-				break;
-				
 		}
-		
 	}
 
 	/**
@@ -400,20 +348,40 @@ public class GUI extends JPanel implements ActionListener, ChangeListener {
 		return delayInMilliseconds;
 	}
 
-	public String getMode() {
-		return mode;
+	public NavElementID getSelectedNavElementIDinMenu(NavElementID menuNavElementID) {
+		JMenu menu = (JMenu) menuNavElementID.getjComponent();
+		
+		for(Component component : menu.getMenuComponents()) {
+			if(component instanceof AbstractButton) {
+				AbstractButton button = (AbstractButton) component;
+				if(button.isSelected()) {
+					return getNavElementIDfromJComponent(button);
+				}
+			}
+		}
+		return null;
+	}
+	
+	public NavElementID getMode() {
+		return getSelectedNavElementIDinMenu(NavElementID.JMenu_mode);
 	}
 
-	public String getGenerationAlgorithm() {
-		return generationAlgorithm;
+	public NavElementID getGenerationAlgorithm() {
+		return getSelectedNavElementIDinMenu(NavElementID.JMenu_generation);
 	}
 
-	public String getSolveAlgorithm() {
-		return solveAlgorithm;
+	public NavElementID getSolveAlgorithm() {
+		return getSelectedNavElementIDinMenu(NavElementID.JMenu_solve);
 	}
 
 	public int getMazeSizeMultiplier() {
-		return mazeSizeMultiplier;
+		JSlider slider = (JSlider) NavElementID.JSlider_mazeSizeMultiplier.getjComponent();
+		return slider.getValue();
+	}
+
+	public void setMazeSizeMultiplier(int mazeSizeMultiplier) {
+		JSlider slider = (JSlider) NavElementID.JSlider_mazeSizeMultiplier.getjComponent();
+		slider.setValue(mazeSizeMultiplier);
 	}
 
 }
