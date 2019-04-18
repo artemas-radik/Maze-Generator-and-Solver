@@ -330,47 +330,45 @@ public class GUI extends JPanel implements ActionListener {
     	super.paintComponent(graphics);
         Graphics2D graphics2D = (Graphics2D) graphics;
         graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        int w = getWidth();
-        int h = getHeight();
+        int width = getWidth();
+        int height = getHeight();
        
         if(maze == null) {
         	return;
         }
         
         if(reset == true) {
-        	graphics2D.clearRect(0, 0, w, h);
+        	graphics2D.clearRect(0, 0, width, height);
         	reset = false;
         }
         
         Node[][] nodes = maze.getNodes();
         
-        double xInc = (double) (w - 2*buffer)/nodes[0].length;
-        double yInc = (double) (h - 2*buffer)/nodes.length;
+        double xIncrement = (double) (width - 2*buffer)/nodes[0].length;
+        double yIncrement = (double) (height - 2*buffer)/nodes.length;
         
         //Draw Squares
         for(int row = 0; row<nodes.length; row++) {
         	for(int col = 0; col<nodes[0].length; col++) {
-        		double x = buffer + col*xInc;
-        		double y = buffer + row*yInc;
-        		double rectWidth = xInc;
-        		double rectHeight = yInc;
+        		double x = buffer + col*xIncrement;
+        		double y = buffer + row*yIncrement;
+        		double rectWidth = xIncrement;
+        		double rectHeight = yIncrement;
         		Rectangle2D rect = new Rectangle2D.Double(x, y, rectWidth, rectHeight);
         		graphics2D.setPaint(nodes[row][col].getColor());
         		graphics2D.fill(rect);
         	}
         }
        
-        // Draw vertical lines
         graphics2D.setPaint(Color.blue);
         for(int i = 0; i <= nodes[0].length; i++) {
-            double x = buffer + i*xInc;
-            graphics2D.draw(new Line2D.Double(x, buffer, x, h-buffer));
+            double x = buffer + i*xIncrement;
+            graphics2D.draw(new Line2D.Double(x, buffer, x, height-buffer));
         }
         
-        // Draw horizontal lines.
         for(int i = 0; i <= nodes.length; i++) {
-            double y = buffer + i*yInc;
-            graphics2D.draw(new Line2D.Double(buffer, y, w-buffer, y));
+            double y = buffer + i*yIncrement;
+            graphics2D.draw(new Line2D.Double(buffer, y, width-buffer, y));
         }
     }
 	
