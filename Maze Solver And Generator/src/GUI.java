@@ -87,6 +87,7 @@ public class GUI extends JPanel implements ActionListener {
        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
        frame.add(this);
        frame.setLocation(0, 0);
+       frame.setSize(600, 600);
        frame.setExtendedState(JFrame.MAXIMIZED_BOTH); 
        //frame.setUndecorated(true);
        

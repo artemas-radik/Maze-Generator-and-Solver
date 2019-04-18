@@ -99,6 +99,10 @@ public class LogicThread extends Thread{
 		int colsAspectRatio = (int) Math.round(rowsAspectRatio * guiWidthToGuiHeightRatio);
 		int rows = Run.getGUI().getMazeSizeMultiplier() * rowsAspectRatio + 1;
 		int cols = Run.getGUI().getMazeSizeMultiplier() * colsAspectRatio + 1;
+		//must be odd
+		if(cols % 2 == 0) {
+			cols--;
+		}
 		return new Dimension(cols, rows);
 	}
 	
