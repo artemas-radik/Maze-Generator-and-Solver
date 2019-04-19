@@ -1,4 +1,5 @@
-import java.io.File;
+package com.magnesiumm.logic;
+
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;

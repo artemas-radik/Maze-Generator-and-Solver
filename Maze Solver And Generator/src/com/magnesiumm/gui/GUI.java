@@ -1,3 +1,10 @@
+package com.magnesiumm.gui;
+
+import com.magnesiumm.logic.Maze;
+import com.magnesiumm.configurationData.*;
+import com.magnesiumm.logic.LogicThread;
+import com.magnesiumm.logic.Node;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -31,12 +38,12 @@ public class GUI extends JPanel implements ActionListener {
 	/**
 	 * value={@value iconFilePath}; This value represents the file path for the window icon
 	 */
-	public static final String iconFilePath = "square2.png";
+	public static final String iconFilePath = "resources/squares.png";
 	
 	/**
 	 * value={@value musicFilePath}; This value represents the file path for the duel of the fates easter egg music
 	 */
-	public static final String musicFilePath = "John Williams Duel of the Fates Star Wars Soundtrack.wav";
+	public static final String musicFilePath = "resources/John Williams Duel of the Fates Star Wars Soundtrack.wav";
 	
 	/**
      * value={@value buffer}; This value represents the buffer of space

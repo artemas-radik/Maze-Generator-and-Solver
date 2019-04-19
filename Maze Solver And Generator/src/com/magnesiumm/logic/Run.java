@@ -1,3 +1,6 @@
+package com.magnesiumm.logic;
+
+import com.magnesiumm.gui.GUI;
 
 public class Run {
 	

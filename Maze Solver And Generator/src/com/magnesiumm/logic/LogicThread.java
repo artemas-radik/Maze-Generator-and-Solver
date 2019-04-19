@@ -1,3 +1,8 @@
+package com.magnesiumm.logic;
+
+import com.magnesiumm.configurationData.*;
+import com.magnesiumm.gui.GUI;
+
 import java.awt.Dimension;
 import java.io.IOException;
 

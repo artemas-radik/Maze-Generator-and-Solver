@@ -1,3 +1,5 @@
+package com.magnesiumm.logic;
+
 import java.awt.Color;
 
 /**

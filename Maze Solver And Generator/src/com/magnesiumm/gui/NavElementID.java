@@ -1,3 +1,5 @@
+package com.magnesiumm.gui;
+
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -6,6 +8,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JSlider;
 import javax.swing.JToggleButton;
+
+import com.magnesiumm.configurationData.*;
 
 public enum NavElementID {
 	//ensures every NavElementID has a JComponent, plus init values

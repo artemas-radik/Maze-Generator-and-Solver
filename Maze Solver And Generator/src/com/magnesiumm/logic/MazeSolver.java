@@ -1,3 +1,7 @@
+package com.magnesiumm.logic;
+
+import com.magnesiumm.gui.GUI;
+
 import java.util.LinkedList;
 
 /**
