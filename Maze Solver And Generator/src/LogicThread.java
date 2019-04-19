@@ -14,47 +14,8 @@ import java.io.IOException;
 */
 public class LogicThread extends Thread{
 	
-	
-	public static final SolveAlgorithm[] algorithms = {SolveAlgorithm.DFS, SolveAlgorithm.BFS};
-	
-	 /**
-	   * This is the main method of the program, it starts the Control Panel.
-	   * @param args Unused.
-	   * @throws InterruptedException because of sleep times.
-	   * @throws IOException file I/O
-	   * @see InterruptedException
-	   */
-	
-	public void demoMode() throws IOException, InterruptedException {
-		while(true) {
-			String filePath = "generatedMaze.txt";
-			Dimension dimension = getDimension();
-			MazeGenerator mazeGenerator = new MazeGenerator(Run.getGUI(), filePath, (int) dimension.getHeight(), (int) dimension.getWidth());
-			mazeGenerator.DFSgenerate();
-			Maze maze = new Maze(filePath);
-			MazeSolver mazeSolver = new MazeSolver(Run.getGUI(), maze);
-			activateWithRandomAlgorithm(mazeSolver);
-		}
-	}
-	
-	public void activateWithRandomAlgorithm(MazeSolver mazeSolver) throws InterruptedException {
-		int random = (int) (Math.random() * algorithms.length);
-		SolveAlgorithm solveAlgorithm = algorithms[random];
-		
-		switch(solveAlgorithm) {
-		
-			case DFS:
-				mazeSolver.DFS();
-				break;
-			
-			case BFS:
-				mazeSolver.BFS();
-				break;
-				
-			default:
-				break;
-		}
-	}
+	public static final SolveAlgorithm[] algorithms = SolveAlgorithm.values();
+	public static final String generatedMazeFilePath = "generatedMaze.txt";
 	
 	/**
 	 * This method is inherited from Thread.
@@ -76,7 +37,7 @@ public class LogicThread extends Thread{
 					break;
 				
 				case Custom_Mode:
-					startMazeSolving();
+					customMode();
 					break;
 				
 			default:
@@ -87,6 +48,78 @@ public class LogicThread extends Thread{
 		} catch (InterruptedException | IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+	}
+	
+	public void demoMode() throws IOException, InterruptedException {
+		while(true) {
+			Dimension dimension = getDimension();
+			MazeGenerator mazeGenerator = new MazeGenerator(Run.getGUI(), generatedMazeFilePath, (int) dimension.getHeight(), (int) dimension.getWidth());
+			mazeGenerator.DFSgenerate();
+			Maze maze = new Maze(generatedMazeFilePath);
+			MazeSolver mazeSolver = new MazeSolver(Run.getGUI(), maze);
+			int random = (int) (Math.random() * algorithms.length);
+			SolveAlgorithm solveAlgorithm = algorithms[random];
+			
+			switch(solveAlgorithm) {
+			
+				case DFS:
+					mazeSolver.DFS();
+					break;
+				
+				case BFS:
+					mazeSolver.BFS();
+					break;
+					
+				default:
+					break;
+			}
+		}
+	}
+	
+	/**
+	 * This method is called by a new thread of Main once
+	 * the user hits submit on the Control Panel.
+	 * This method is responsible for beginning the
+	 * maze solving process.
+	 * @throws IOException 
+	 * @throws InterruptedException because of sleep times.
+	 * @see InterruptedException
+	 */
+	public void customMode() throws IOException, InterruptedException {
+		while(true) {
+			GenerationAlgorithm generationAlgorithm = Run.getGUI().getGenerationAlgorithm();
+			SolveAlgorithm solveAlgorithm = Run.getGUI().getSolveAlgorithm();
+			Dimension dimension = getDimension();
+			
+			MazeGenerator mazeGenerator = new MazeGenerator(Run.getGUI(), generatedMazeFilePath, (int) dimension.getHeight(), (int) dimension.getWidth());
+			
+			switch(generationAlgorithm) {
+			
+				case DFS_random:
+					mazeGenerator.DFSgenerate();
+					break;
+				
+				default:
+					break;
+			}
+			
+			Maze maze = new Maze(generatedMazeFilePath);
+			MazeSolver mazeSolver = new MazeSolver(Run.getGUI(), maze);
+			
+			switch(solveAlgorithm) {
+			
+				case DFS:
+					mazeSolver.DFS();
+					break;
+				
+				case BFS:
+					mazeSolver.BFS();
+					break;
+					
+				default:
+					break;
+			}
 		}
 	}
 	
@@ -104,55 +137,6 @@ public class LogicThread extends Thread{
 			cols--;
 		}
 		return new Dimension(cols, rows);
-	}
-	
-	/**
-	 * This method is called by a new thread of Main once
-	 * the user hits submit on the Control Panel.
-	 * This method is responsible for beginning the
-	 * maze solving process.
-	 * @throws IOException 
-	 * @throws InterruptedException because of sleep times.
-	 * @see InterruptedException
-	 */
-	public void startMazeSolving() throws IOException, InterruptedException {
-		while(true) {
-			GenerationAlgorithm generationAlgorithm = Run.getGUI().getGenerationAlgorithm();
-			SolveAlgorithm solveAlgorithm = Run.getGUI().getSolveAlgorithm();
-			String filePath = "generatedMaze.txt";
-			
-			Dimension dimension = getDimension();
-			
-			MazeGenerator mazeGenerator = new MazeGenerator(Run.getGUI(), filePath, (int) dimension.getHeight(), (int) dimension.getWidth());
-			
-			switch(generationAlgorithm) {
-			
-				case DFS_random:
-					mazeGenerator.DFSgenerate();
-					break;
-				
-				default:
-					break;
-			}
-			
-			Maze maze = new Maze(filePath);
-			MazeSolver mazeSolver = new MazeSolver(Run.getGUI(), maze);
-			
-			switch(solveAlgorithm) {
-			
-				case DFS:
-					mazeSolver.DFS();
-					break;
-				
-				case BFS:
-					mazeSolver.BFS();
-					break;
-					
-				default:
-					break;
-			}
-			
-		}
 	}
 
 }

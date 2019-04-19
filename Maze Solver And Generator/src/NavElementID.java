@@ -8,6 +8,7 @@ import javax.swing.JSlider;
 import javax.swing.JToggleButton;
 
 public enum NavElementID {
+	//ensures every NavElementID has a JComponent, plus init values
 	
 	JMenuBar_menuBar(new JMenuBar()),
 	
