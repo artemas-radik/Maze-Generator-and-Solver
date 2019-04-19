@@ -31,23 +31,23 @@ import javax.swing.*;
 public class GUI extends JPanel implements ActionListener {
 	
 	/**
-	 * value={@value title}; This value represents the title of the window
+	 * value={@value title}; This value represents the default title of the window.
 	 */
 	public static final String defaultTitle = "The a-MAZE-ing maze solver";
 	
 	/**
-	 * value={@value iconFilePath}; This value represents the file path for the window icon
+	 * value={@value iconFilePath}; This value represents the file path for the window icon.
 	 */
 	public static final String iconFilePath = "resources/squares.png";
 	
 	/**
-	 * value={@value musicFilePath}; This value represents the file path for the duel of the fates easter egg music
+	 * value={@value musicFilePath}; This value represents the file path for the duel of the fates easter egg music.
 	 */
 	public static final String musicFilePath = "resources/John Williams Duel of the Fates Star Wars Soundtrack.wav";
 	
 	/**
      * value={@value buffer}; This value represents the buffer of space
-     * on all sides of the GUI window, in pixels.
+     * on all sides of the GUI maze area, in pixels.
      */ 
 	public static final int buffer = 6;
 	
@@ -81,13 +81,7 @@ public class GUI extends JPanel implements ActionListener {
      * Denotes whether realTime is currently enabled or not.
      */
     private boolean realTime = false;
-    
-    /**
-     * LinkedList containing all jComponents within the GUI.
-     */
-    private LinkedList<NavElementID> jComponents = new LinkedList<NavElementID>();
-    
-    
+      
     /**
      * Initializes GUI window.
      * @param maze This is the maze which the GUI
@@ -103,15 +97,24 @@ public class GUI extends JPanel implements ActionListener {
        frame.setIconImage(icon.getImage());
        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
        frame.add(this);
-       frame.setLocation(0, 0);
-       frame.setSize(600, 600);
+       Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+       int minimizedWidth = (int) (screenSize.getWidth() * 0.6);
+       int minimizedHeight = (int) (screenSize.getHeight() * 0.6);
+       int minimizedXLocation = (int) (screenSize.getWidth() * 0.2);
+       int minimizedYLocation = (int) (screenSize.getHeight() * 0.2);
+       frame.setLocation(minimizedXLocation, minimizedYLocation);
+       frame.setSize(minimizedWidth, minimizedHeight);
        frame.setExtendedState(JFrame.MAXIMIZED_BOTH); 
        //frame.setUndecorated(true);
        drawMenu();
        frame.setVisible(true);
     }
     
-    
+    /**
+     * Adds a JComponent defined in NavElementID to our GUI.
+     * @param id the NavElementID of the JComponent to be added.
+     * @return The jComponent associated with the NavElementID.
+     */
     public JComponent initJComponent(NavElementID id) {
     	JComponent jComponent = id.getjComponent();
     	
@@ -119,10 +122,15 @@ public class GUI extends JPanel implements ActionListener {
     		( (AbstractButton) jComponent).addActionListener(this);
     	}
     	
-    	jComponents.add(id);
     	return jComponent;
     }
     
+    /**
+     * Adds a JComponent defined in NavElementID to our GUI, and adds it to the specified button group.
+     * @param id id the NavElementID of the JComponent to be added
+     * @param buttonGroup
+     * @return The jComponent associated with the NavElementID.
+     */
     public JComponent initJComponent(NavElementID id, ButtonGroup buttonGroup) {
     	JComponent jComponent = id.getjComponent();
     	buttonGroup.add( (AbstractButton) jComponent);
@@ -236,7 +244,7 @@ public class GUI extends JPanel implements ActionListener {
      * @return the NavElementID associated with the JComponent.
      */
     public NavElementID getNavElementIDfromJComponent(JComponent jComponent) {
-    	for(NavElementID navElementID : jComponents) {
+    	for(NavElementID navElementID : NavElementID.values()) {
     		if(navElementID.getjComponent().equals(jComponent)) {
     			return navElementID;
     		}
@@ -252,7 +260,7 @@ public class GUI extends JPanel implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		AbstractButton source = (AbstractButton) e.getSource();
 		NavElementID navElementID = getNavElementIDfromJComponent(source);
-		//unqualified vs qualified enums
+
 		switch(navElementID) {
 			
 			case JMenuItem_realTime:
@@ -281,7 +289,8 @@ public class GUI extends JPanel implements ActionListener {
 					speedSlider.setEnabled(false);
 					realTime = true;
 			    }
-			    else if(realTime){
+			    
+				else if(realTime) {
 			    	speedSlider.setEnabled(true);
 			    	realTime = false;
 			    }
@@ -336,7 +345,6 @@ public class GUI extends JPanel implements ActionListener {
             
     	super.paintComponent(graphics);
         Graphics2D graphics2D = (Graphics2D) graphics;
-        graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         int width = getWidth();
         int height = getHeight();
        
@@ -344,21 +352,21 @@ public class GUI extends JPanel implements ActionListener {
         	return;
         }
         
-        if(reset == true) {
+        if(reset) {
         	graphics2D.clearRect(0, 0, width, height);
         	reset = false;
         }
         
         Node[][] nodes = maze.getNodes();
         
-        double xIncrement = (double) (width - 2*buffer)/nodes[0].length;
-        double yIncrement = (double) (height - 2*buffer)/nodes.length;
+        double xIncrement = (double) (width - 2 * buffer) / nodes[0].length;
+        double yIncrement = (double) (height - 2 * buffer) / nodes.length;
         
         //Draw Squares
         for(int row = 0; row<nodes.length; row++) {
         	for(int col = 0; col<nodes[0].length; col++) {
-        		double x = buffer + col*xIncrement;
-        		double y = buffer + row*yIncrement;
+        		double x = buffer + col * xIncrement;
+        		double y = buffer + row * yIncrement;
         		double rectWidth = xIncrement;
         		double rectHeight = yIncrement;
         		Rectangle2D rect = new Rectangle2D.Double(x, y, rectWidth, rectHeight);
@@ -367,18 +375,34 @@ public class GUI extends JPanel implements ActionListener {
         	}
         }
        
+        //Draw Vertical Lines
         graphics2D.setPaint(Color.blue);
-        for(int i = 0; i <= nodes[0].length; i++) {
-            double x = buffer + i*xIncrement;
+        for(int col = 0; col <= nodes[0].length; col++) {
+            double x = buffer + col * xIncrement;
             graphics2D.draw(new Line2D.Double(x, buffer, x, height-buffer));
         }
         
-        for(int i = 0; i <= nodes.length; i++) {
-            double y = buffer + i*yIncrement;
+        //Draw Horizontal Lines
+        for(int row = 0; row <= nodes.length; row++) {
+            double y = buffer + row * yIncrement;
             graphics2D.draw(new Line2D.Double(buffer, y, width-buffer, y));
         }
     }
 	
+    public NavElementID getSelectedNavElementIDinMenu(NavElementID menuNavElementID) {
+		JMenu menu = (JMenu) menuNavElementID.getjComponent();
+		
+		for(Component component : menu.getMenuComponents()) {
+			if(component instanceof AbstractButton) {
+				AbstractButton button = (AbstractButton) component;
+				if(button.isSelected()) {
+					return getNavElementIDfromJComponent(button);
+				}
+			}
+		}
+		return null;
+	}
+    
 	public JFrame getFrame() {
 		return frame;
 	}
@@ -395,25 +419,6 @@ public class GUI extends JPanel implements ActionListener {
 		
 		JSlider slider = (JSlider) NavElementID.JSlider_speed.getjComponent();
 		return slider.getMaximum() + 1 - slider.getValue();
-	}
-
-	public void setDelayInMilliseconds(int milliseconds) {
-		JSlider slider = (JSlider) NavElementID.JSlider_mazeSizeMultiplier.getjComponent();
-		slider.setValue(slider.getMaximum() + 1 - milliseconds);
-	}
-	
-	public NavElementID getSelectedNavElementIDinMenu(NavElementID menuNavElementID) {
-		JMenu menu = (JMenu) menuNavElementID.getjComponent();
-		
-		for(Component component : menu.getMenuComponents()) {
-			if(component instanceof AbstractButton) {
-				AbstractButton button = (AbstractButton) component;
-				if(button.isSelected()) {
-					return getNavElementIDfromJComponent(button);
-				}
-			}
-		}
-		return null;
 	}
 	
 	public Mode getMode() {
@@ -434,11 +439,6 @@ public class GUI extends JPanel implements ActionListener {
 	public int getMazeSizeMultiplier() {
 		JSlider slider = (JSlider) NavElementID.JSlider_mazeSizeMultiplier.getjComponent();
 		return slider.getValue();
-	}
-
-	public void setMazeSizeMultiplier(int mazeSizeMultiplier) {
-		JSlider slider = (JSlider) NavElementID.JSlider_mazeSizeMultiplier.getjComponent();
-		slider.setValue(mazeSizeMultiplier);
 	}
 
 }
