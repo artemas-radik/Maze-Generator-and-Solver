@@ -20,7 +20,6 @@ import java.io.IOException;
 */
 public class LogicThread extends Thread{
 	
-	public static final SolveAlgorithm[] algorithms = SolveAlgorithm.values();
 	public static final String generatedMazeFilePath = "generatedMaze.txt";
 	
 	/**
@@ -39,12 +38,19 @@ public class LogicThread extends Thread{
 			switch(mode) {
 			
 				case Demo_Mode:
-					demoMode();
-					break;
+					GenerationAlgorithm[] generationAlgorithms = GenerationAlgorithm.values();
+					SolveAlgorithm[] solveAlgorithms = SolveAlgorithm.values();
+					while(true) {
+						GenerationAlgorithm randomGenerationAlgorithm = generationAlgorithms[(int) (Math.random() * generationAlgorithms.length)];
+						SolveAlgorithm randomSolveAlgorithm = solveAlgorithms[(int) (Math.random() * solveAlgorithms.length)];
+						startMazeSolving(randomGenerationAlgorithm, randomSolveAlgorithm, generatedMazeFilePath);
+					}
 				
 				case Custom_Mode:
-					customMode();
-					break;
+					GUI gui = Run.getGUI();
+					while(true) {
+						startMazeSolving(gui.getGenerationAlgorithm(), gui.getSolveAlgorithm(), generatedMazeFilePath);
+					}
 				
 			default:
 				break;
@@ -57,76 +63,50 @@ public class LogicThread extends Thread{
 		}
 	}
 	
-	public void demoMode() throws IOException, InterruptedException {
-		while(true) {
-			Dimension dimension = getDimension();
-			MazeGenerator mazeGenerator = new MazeGenerator(Run.getGUI(), generatedMazeFilePath, (int) dimension.getHeight(), (int) dimension.getWidth());
-			mazeGenerator.DFSgenerate();
-			Maze maze = new Maze(generatedMazeFilePath);
-			MazeSolver mazeSolver = new MazeSolver(Run.getGUI(), maze);
-			int random = (int) (Math.random() * algorithms.length);
-			SolveAlgorithm solveAlgorithm = algorithms[random];
+	public void startMazeSolving(GenerationAlgorithm generationAlgorithm, SolveAlgorithm solveAlgorithm, String mazeFilePath) throws IOException, InterruptedException {
+		Dimension dimension = getDimension();
+		Maze maze;
+		MazeSolver mazeSolver;
+		
+		switch(mazeFilePath) {
 			
-			switch(solveAlgorithm) {
-			
-				case DFS:
-					mazeSolver.DFS();
-					break;
-				
-				case BFS:
-					mazeSolver.BFS();
-					break;
+			case generatedMazeFilePath:
+				MazeGenerator mazeGenerator = new MazeGenerator(Run.getGUI(), generatedMazeFilePath, (int) dimension.getHeight(), (int) dimension.getWidth());
+				switch(generationAlgorithm) {
 					
-				default:
-					break;
-			}
-		}
-	}
-	
-	/**
-	 * This method is called by a new thread of Main once
-	 * the user hits submit on the Control Panel.
-	 * This method is responsible for beginning the
-	 * maze solving process.
-	 * @throws IOException 
-	 * @throws InterruptedException because of sleep times.
-	 * @see InterruptedException
-	 */
-	public void customMode() throws IOException, InterruptedException {
-		while(true) {
-			GenerationAlgorithm generationAlgorithm = Run.getGUI().getGenerationAlgorithm();
-			SolveAlgorithm solveAlgorithm = Run.getGUI().getSolveAlgorithm();
-			Dimension dimension = getDimension();
-			
-			MazeGenerator mazeGenerator = new MazeGenerator(Run.getGUI(), generatedMazeFilePath, (int) dimension.getHeight(), (int) dimension.getWidth());
-			
-			switch(generationAlgorithm) {
-			
-				case DFS_random:
-					mazeGenerator.DFSgenerate();
-					break;
-				
-				default:
-					break;
-			}
-			
-			Maze maze = new Maze(generatedMazeFilePath);
-			MazeSolver mazeSolver = new MazeSolver(Run.getGUI(), maze);
-			
-			switch(solveAlgorithm) {
-			
-				case DFS:
-					mazeSolver.DFS();
-					break;
-				
-				case BFS:
-					mazeSolver.BFS();
-					break;
+					case DFS_random:
+						mazeGenerator.DFSgenerate();
+						break;
 					
-				default:
-					break;
-			}
-		}
+					default:
+						break;
+				
+				}
+				maze = new Maze(generatedMazeFilePath);
+				break;
+				
+			default:
+				maze = new Maze(mazeFilePath);
+				break;
+		
+		}	
+		
+		mazeSolver = new MazeSolver(Run.getGUI(), maze);
+		
+		switch(solveAlgorithm) {
+			
+			case DFS:
+				mazeSolver.DFS();
+				break;
+			
+			case BFS:
+				mazeSolver.BFS();
+				break;
+			
+			default:
+				break;
+		}	
+		
 	}
 	
 	public Dimension getDimension() {

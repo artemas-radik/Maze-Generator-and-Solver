@@ -81,7 +81,7 @@ public class GUI extends JPanel implements ActionListener {
      * Denotes whether realTime is currently enabled or not.
      */
     private boolean realTime = false;
-      
+    
     /**
      * Initializes GUI window.
      * @param maze This is the maze which the GUI
@@ -217,19 +217,19 @@ public class GUI extends JPanel implements ActionListener {
     public void makeGoState(Boolean state) {
     	//false = disable it
     	//true = enable it
-    	JToggleButton mockGo = (JToggleButton) NavElementID.JToggleButton_go.getjComponent();
-    	if(mockGo.getText().equals("Stop")) {
+    	JToggleButton go = (JToggleButton) NavElementID.JToggleButton_go.getjComponent();
+    	if(go.isSelected()) {
     		if(state) {
     			return;
     		}
     		else if(!state) {
-    			mockGo.doClick();
+    			go.doClick();
     			return;
     		}
     	}
-    	else if(mockGo.getText().equals("Go")) {
+    	else if(!go.isSelected()) {
     		if(state) {
-    			mockGo.doClick();;
+    			go.doClick();;
     			return;
     		}
     		else if(!state) {
@@ -311,18 +311,20 @@ public class GUI extends JPanel implements ActionListener {
 				break;
 			
 			case JToggleButton_go:
-				String textState = source.getText();
-				if(textState.equals("Go")) {
+				String sourceText = source.getText();
+				if(sourceText.equals("Go")) {
 					//Go clicked
 					NavElementID.JMenu_maze.getjComponent().setEnabled(false);
 					NavElementID.JMenu_mode.getjComponent().setEnabled(false);
 					NavElementID.JMenu_generation.getjComponent().setEnabled(false);
 					NavElementID.JMenu_solve.getjComponent().setEnabled(false);
+					source.setSelected(true);
 					source.setText("Stop");
 					currentLogicThread.resume();
 				}
-				else if(textState.equals("Stop")) {
+				else if(sourceText.equals("Stop")) {
 					//Stop clicked
+					source.setSelected(false);
 					source.setText("Go");
 					currentLogicThread.suspend();
 				}
