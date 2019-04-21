@@ -40,6 +40,9 @@ public class GUI extends JPanel implements ActionListener {
 	 */
 	public static final String iconFilePath = "resources/squares.png";
 	
+	/**
+	 * value={@value generatedMazeFilePath}; This value represents the file path for the generated maze.
+	 */
 	public static final String generatedMazeFilePath = "generatedMaze.txt";
 	
 	/**
