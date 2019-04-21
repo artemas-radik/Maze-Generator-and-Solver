@@ -12,7 +12,6 @@ import java.awt.event.KeyEvent;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
-import java.util.LinkedList;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
@@ -43,7 +42,7 @@ public class GUI extends JPanel implements ActionListener {
 	/**
 	 * value={@value generatedMazeFilePath}; This value represents the file path for the generated maze.
 	 */
-	public static final String generatedMazeFilePath = "generatedMaze.txt";
+	public static final String generatedMazeFilePath = "resources/generatedMaze.txt";
 	
 	/**
 	 * value={@value musicFilePath}; This value represents the file path for the duel of the fates easter egg music.
