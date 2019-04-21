@@ -3,9 +3,12 @@ package com.magnesiumm.logic;
 import com.magnesiumm.Run;
 import com.magnesiumm.configurationData.*;
 import com.magnesiumm.gui.GUI;
+import com.magnesiumm.gui.NavElementID;
 
 import java.awt.Dimension;
 import java.io.IOException;
+
+import javax.swing.JLabel;
 
 /**
 * This main class is responsible for using all the other classes
@@ -20,8 +23,6 @@ import java.io.IOException;
 */
 public class LogicThread extends Thread{
 	
-	public static final String generatedMazeFilePath = "generatedMaze.txt";
-	
 	/**
 	 * This method is inherited from Thread.
 	 * It is called when a new thread of Main
@@ -34,6 +35,8 @@ public class LogicThread extends Thread{
 	public void run() {
 		try {
 			Mode mode = Run.getGUI().getMode();
+			JLabel label = (JLabel) NavElementID.JLabel_mazeFilePath.getjComponent();
+			String currentMazeFilePath = label.getText();
 			
 			switch(mode) {
 			
@@ -43,13 +46,13 @@ public class LogicThread extends Thread{
 					while(true) {
 						GenerationAlgorithm randomGenerationAlgorithm = generationAlgorithms[(int) (Math.random() * generationAlgorithms.length)];
 						SolveAlgorithm randomSolveAlgorithm = solveAlgorithms[(int) (Math.random() * solveAlgorithms.length)];
-						startMazeSolving(randomGenerationAlgorithm, randomSolveAlgorithm, generatedMazeFilePath);
+						startMazeSolving(randomGenerationAlgorithm, randomSolveAlgorithm, currentMazeFilePath);
 					}
 				
 				case Custom_Mode:
 					GUI gui = Run.getGUI();
 					while(true) {
-						startMazeSolving(gui.getGenerationAlgorithm(), gui.getSolveAlgorithm(), generatedMazeFilePath);
+						startMazeSolving(gui.getGenerationAlgorithm(), gui.getSolveAlgorithm(), currentMazeFilePath);
 					}
 				
 			default:
@@ -58,7 +61,6 @@ public class LogicThread extends Thread{
 			
 			//startMazeSolving();
 		} catch (InterruptedException | IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -70,8 +72,8 @@ public class LogicThread extends Thread{
 		
 		switch(mazeFilePath) {
 			
-			case generatedMazeFilePath:
-				MazeGenerator mazeGenerator = new MazeGenerator(Run.getGUI(), generatedMazeFilePath, (int) dimension.getHeight(), (int) dimension.getWidth());
+			case GUI.generatedMazeFilePath:
+				MazeGenerator mazeGenerator = new MazeGenerator(Run.getGUI(), GUI.generatedMazeFilePath, (int) dimension.getHeight(), (int) dimension.getWidth());
 				switch(generationAlgorithm) {
 					
 					case DFS_random:
@@ -82,7 +84,7 @@ public class LogicThread extends Thread{
 						break;
 				
 				}
-				maze = new Maze(generatedMazeFilePath);
+				maze = new Maze(GUI.generatedMazeFilePath);
 				break;
 				
 			default:

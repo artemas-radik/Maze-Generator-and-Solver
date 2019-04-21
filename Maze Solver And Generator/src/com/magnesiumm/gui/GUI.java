@@ -40,6 +40,8 @@ public class GUI extends JPanel implements ActionListener {
 	 */
 	public static final String iconFilePath = "resources/squares.png";
 	
+	public static final String generatedMazeFilePath = "generatedMaze.txt";
+	
 	/**
 	 * value={@value musicFilePath}; This value represents the file path for the duel of the fates easter egg music.
 	 */
@@ -160,6 +162,10 @@ public class GUI extends JPanel implements ActionListener {
         JMenu maze = (JMenu) initJComponent(NavElementID.JMenu_maze);
         maze.add(initJComponent(NavElementID.JLabel_mazeSize));
         maze.add(initJComponent(NavElementID.JSlider_mazeSizeMultiplier));
+        maze.addSeparator();
+        maze.add(initJComponent(NavElementID.JLabel_mazeFilePathLabel));
+        maze.add(initJComponent(NavElementID.JLabel_mazeFilePath));
+        maze.add(initJComponent(NavElementID.JMenuItem_changeMazeFilePath));
         
         JMenu generation = (JMenu) initJComponent(NavElementID.JMenu_generation);
         generation.setEnabled(false);
@@ -310,6 +316,13 @@ public class GUI extends JPanel implements ActionListener {
 				NavElementID.JMenu_solve.getjComponent().setEnabled(true);
 				break;
 			
+			case JMenuItem_changeMazeFilePath:
+				JLabel label = (JLabel) NavElementID.JLabel_mazeFilePath.getjComponent();
+//				String currentMazeFilePath = label.getText();
+				String newMazeFilePath = JOptionPane.showInputDialog(source.getText() + " - For a randomly generated maze allow for default path: \""+generatedMazeFilePath+"\"", generatedMazeFilePath);
+				label.setText(newMazeFilePath);
+				break;
+				
 			case JToggleButton_go:
 				String sourceText = source.getText();
 				if(sourceText.equals("Go")) {

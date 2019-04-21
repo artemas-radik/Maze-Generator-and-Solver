@@ -27,8 +27,11 @@ public enum NavElementID {
 	JRadioButtonMenuItem_customMode(new JRadioButtonMenuItem("Custom Mode", false), Mode.Custom_Mode),
 	
 	JMenu_maze(new JMenu("Maze")),
-	JLabel_mazeSize(new JLabel("Maze Size - WARNING: Large sizes may cause stack overflow!")),
+	JLabel_mazeSize(new JLabel("Generated Maze Size - WARNING: Large sizes may cause stack overflow!")),
 	JSlider_mazeSizeMultiplier(new JSlider(JSlider.HORIZONTAL, 1, 20, 10)),
+	JLabel_mazeFilePathLabel(new JLabel("Current Maze File Path: ")),
+	JLabel_mazeFilePath(new JLabel(GUI.generatedMazeFilePath)),
+	JMenuItem_changeMazeFilePath(new JMenuItem("Change Maze File Path")),
 	
 	JMenu_generation(new JMenu("Generation")),
 	JRadioButtonMenuItem_dfsRandomGeneration(new JRadioButtonMenuItem("DFS Random Generation (Depth-First-Search)", true), GenerationAlgorithm.DFS_random),
