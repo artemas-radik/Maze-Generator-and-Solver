@@ -2,7 +2,7 @@
 
 This project is a visualization of several simple graph-theory algorithms through the use of a GUI.
 
-![](https://github.com/magnesiumm/Maze-Generator-and-Solver/blob/master/Maze%20Solver%20And%20Generator/images/maze%20solver%20and%20generator.png)
+![](https://github.com/magnesiumm/Maze-Generator-and-Solver/blob/master/images/maze%20solver%20and%20generator.png)
 
 ## How do I start the program?
 
