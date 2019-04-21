@@ -65,6 +65,14 @@ public class LogicThread extends Thread{
 		}
 	}
 	
+	/**
+	 * This method begins the logic for the program, within this thread.
+	 * @param generationAlgorithm The generation algorithm to generate a maze. Will be ignored if custom maze is imported.
+	 * @param solveAlgorithm The solve algorithm to be used.
+	 * @param mazeFilePath The file path of the maze to be solved. Can be either a generated maze or a custom one.
+	 * @throws IOException Problems importing maze files.
+	 * @throws InterruptedException Thread issues.
+	 */
 	public void startMazeSolving(GenerationAlgorithm generationAlgorithm, SolveAlgorithm solveAlgorithm, String mazeFilePath) throws IOException, InterruptedException {
 		Dimension dimension = getDimension();
 		Maze maze;
@@ -111,6 +119,13 @@ public class LogicThread extends Thread{
 		
 	}
 	
+	/**
+	 * This method is used to decide how many rows and columns to generate a maze with. 
+	 * This exists because it ensures that generated mazes will always scale according to the current GUI JPanel
+	 * size, as to ensure that all nodes look as close to squares on the screen as possible. This method accounts
+	 * for the user set maze size multiplier slider.
+	 * @return The dimension that the generated maze should have.
+	 */
 	public Dimension getDimension() {
 		double guiWidth = Run.getGUI().getWidth() - 2*GUI.buffer;
 		double guiHeight = Run.getGUI().getHeight()- 2*GUI.buffer;
