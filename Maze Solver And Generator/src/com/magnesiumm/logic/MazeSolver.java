@@ -36,7 +36,7 @@ public class MazeSolver {
 	public MazeSolver(GUI gui, Maze maze) {
 		this.maze = maze;
 		this.gui = gui;
-		this.gui.setMaze(this.maze);
+		this.gui.getMazeJPanel().setMaze(this.maze);
 	}
 	
 	/**
@@ -84,7 +84,7 @@ public class MazeSolver {
 	public Node DFSrecursive(Node current, Node[][] nodes) throws InterruptedException {
 		
 		current.setCurrentNode(true);
-		gui.repaint();
+		gui.getMazeJPanel().repaint();
 		Thread.sleep(gui.getDelayInMilliseconds());
 		
 		if(current.getState() == Node.endNode) {
@@ -145,7 +145,7 @@ public class MazeSolver {
 			Node current = queue.poll();
 			current.setCurrentNode(true);
 			
-			gui.repaint();
+			gui.getMazeJPanel().repaint();
 			Thread.sleep(gui.getDelayInMilliseconds());
 			
 			if(current.getState() == Node.endNode) {
@@ -251,13 +251,13 @@ public class MazeSolver {
 			if(!(current.getState() == Node.endNode || current.getState() == Node.startNode)) {
 				current.setState(Node.pathNode);
 			}
-			gui.repaint();
+			gui.getMazeJPanel().repaint();
 			Thread.sleep(gui.getDelayInMilliseconds());
 			current.setCurrentNode(false);
 			current = current.getParent();
 		}
 		current.setState(Node.pathNode);
-		gui.repaint();
+		gui.getMazeJPanel().repaint();
 		endPath.addFirst(current);
 		return endPath;		
 	}

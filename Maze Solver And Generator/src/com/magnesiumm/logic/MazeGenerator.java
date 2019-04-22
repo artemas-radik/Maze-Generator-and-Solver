@@ -39,7 +39,7 @@ public class MazeGenerator {
 		}
 		
 		this.gui = gui;
-		this.gui.setMaze(maze);
+		this.gui.getMazeJPanel().setMaze(maze);
 		startNode = nodes[1][0];
 	}
 	
@@ -53,11 +53,12 @@ public class MazeGenerator {
 	
 	public void DFSgenerateRecursive(Node current, Node[][] nodes) throws InterruptedException {
 		
+		gui.getMazeJPanel().repaint();
 		current.setCurrentNode(true);
 		Node middle = getMiddleNode(current, current.getParent(), nodes);
 		middle.setState(Node.pathNode);
 		Thread.sleep(gui.getDelayInMilliseconds());
-		gui.repaint();
+		gui.getMazeJPanel().repaint();
 		LinkedList<Node> selection = getNeighbors(current, nodes);
 		
 		while(selection.size() > 0) {
@@ -74,7 +75,7 @@ public class MazeGenerator {
 		current.setCurrentNode(false);
 		current.setState(Node.empty);
 		Thread.sleep(gui.getDelayInMilliseconds());
-		gui.repaint();
+		gui.getMazeJPanel().repaint();
 		middle.setCurrentNode(false);
 		middle.setState(Node.empty);
 	}

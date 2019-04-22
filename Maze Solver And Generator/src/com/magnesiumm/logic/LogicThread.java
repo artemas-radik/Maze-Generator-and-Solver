@@ -3,6 +3,7 @@ package com.magnesiumm.logic;
 import com.magnesiumm.Run;
 import com.magnesiumm.configurationData.*;
 import com.magnesiumm.gui.GUI;
+import com.magnesiumm.gui.MazeJPanel;
 import com.magnesiumm.gui.NavElementID;
 
 import java.awt.Dimension;
@@ -126,8 +127,8 @@ public class LogicThread extends Thread{
 	 * @return The dimension that the generated maze should have.
 	 */
 	public Dimension getDimension() {
-		double guiWidth = Run.getGUI().getWidth() - 2*GUI.buffer;
-		double guiHeight = Run.getGUI().getHeight()- 2*GUI.buffer;
+		double guiWidth = Run.getGUI().getMazeJPanel().getWidth() - 2*MazeJPanel.buffer;
+		double guiHeight = Run.getGUI().getMazeJPanel().getHeight()- 2*MazeJPanel.buffer;
 		double guiWidthToGuiHeightRatio = guiWidth / guiHeight;
 		
 		int rowsAspectRatio = 10;

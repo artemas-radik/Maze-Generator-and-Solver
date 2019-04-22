@@ -1,16 +1,12 @@
 package com.magnesiumm.gui;
 
-import com.magnesiumm.logic.Maze;
 import com.magnesiumm.configurationData.*;
 import com.magnesiumm.logic.LogicThread;
-import com.magnesiumm.logic.Node;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.awt.geom.Line2D;
-import java.awt.geom.Rectangle2D;
 import java.io.File;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -27,7 +23,7 @@ import javax.swing.*;
 * @author  AJ Radik and Victoria Vigorito
 * @version 5.0 
 */
-public class GUI extends JPanel implements ActionListener {
+public class GUI implements ActionListener {
 	
 	/**
 	 * value={@value title}; This value represents the default title of the window.
@@ -50,26 +46,20 @@ public class GUI extends JPanel implements ActionListener {
 	public static final String musicFilePath = "resources/John Williams Duel of the Fates Star Wars Soundtrack.wav";
 	
 	/**
-     * value={@value buffer}; This value represents the buffer of space
-     * on all sides of the GUI maze area, in pixels.
-     */ 
-	public static final int buffer = 6;
-	
-	/**
 	 * The current logical thread that this GUI is representing
 	 */
 	private Thread currentLogicThread;
-	
-	/**
-	 * This value represents the maze which the GUI is representing.
-	 */
-	private Maze maze;
 	
 	/**
 	 * This values represents the JFrame which the GUI is 
 	 * using to display everything.
 	 */
     private JFrame frame;
+    
+    /**
+     * The part of the gui that represents the maze.
+     */
+    private MazeJPanel mazeJPanel;
     
     /**
      * Denotes whether easter egg has been triggered. Can only happen once.
@@ -100,7 +90,8 @@ public class GUI extends JPanel implements ActionListener {
        ImageIcon icon = new ImageIcon(iconFilePath);
        frame.setIconImage(icon.getImage());
        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-       frame.add(this);
+       mazeJPanel = new MazeJPanel(this);
+       frame.add(mazeJPanel);
        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
        int minimizedWidth = (int) (screenSize.getWidth() * 0.6);
        int minimizedHeight = (int) (screenSize.getHeight() * 0.6);
@@ -207,10 +198,10 @@ public class GUI extends JPanel implements ActionListener {
     	}
     	currentLogicThread.suspend();
     	currentLogicThread.stop();
-    	maze = null;
+    	mazeJPanel.setMaze(null);
     	reset = true;
     	makeGoState(false);
-    	repaint();
+    	mazeJPanel.repaint();
     	currentLogicThread = new LogicThread();
     	currentLogicThread.start();
     	currentLogicThread.suspend();
@@ -349,62 +340,6 @@ public class GUI extends JPanel implements ActionListener {
 				break;
 		}
 	}
-
-	/**
-     * This method is responsible for drawing the maze
-     * and all of its nodes in the correct states. It is called
-     * (down the line) every time repaint() is called. This method
-     * updates the GUI every time repaint() is called.
-     * @param graphics The graphics object used by the method.
-     */
-    @Override
-    protected void paintComponent(Graphics graphics) {
-            
-    	super.paintComponent(graphics);
-        Graphics2D graphics2D = (Graphics2D) graphics;
-        int width = getWidth();
-        int height = getHeight();
-       
-        if(maze == null) {
-        	return;
-        }
-        
-        if(reset) {
-        	graphics2D.clearRect(0, 0, width, height);
-        	reset = false;
-        }
-        
-        Node[][] nodes = maze.getNodes();
-        
-        double xIncrement = (double) (width - 2 * buffer) / nodes[0].length;
-        double yIncrement = (double) (height - 2 * buffer) / nodes.length;
-        
-        //Draw Squares
-        for(int row = 0; row<nodes.length; row++) {
-        	for(int col = 0; col<nodes[0].length; col++) {
-        		double x = buffer + col * xIncrement;
-        		double y = buffer + row * yIncrement;
-        		double rectWidth = xIncrement;
-        		double rectHeight = yIncrement;
-        		Rectangle2D rect = new Rectangle2D.Double(x, y, rectWidth, rectHeight);
-        		graphics2D.setPaint(nodes[row][col].getColor());
-        		graphics2D.fill(rect);
-        	}
-        }
-       
-        //Draw Vertical Lines
-        graphics2D.setPaint(Color.blue);
-        for(int col = 0; col <= nodes[0].length; col++) {
-            double x = buffer + col * xIncrement;
-            graphics2D.draw(new Line2D.Double(x, buffer, x, height-buffer));
-        }
-        
-        //Draw Horizontal Lines
-        for(int row = 0; row <= nodes.length; row++) {
-            double y = buffer + row * yIncrement;
-            graphics2D.draw(new Line2D.Double(buffer, y, width-buffer, y));
-        }
-    }
 	
     public NavElementID getSelectedNavElementIDinMenu(NavElementID menuNavElementID) {
 		JMenu menu = (JMenu) menuNavElementID.getjComponent();
@@ -424,8 +359,12 @@ public class GUI extends JPanel implements ActionListener {
 		return frame;
 	}
 	
-	public void setMaze(Maze maze) {
-		this.maze = maze;
+	public boolean isReset() {
+		return reset;
+	}
+	
+	public void setReset(boolean reset) {
+		this.reset = reset;
 	}
 	
 	public int getDelayInMilliseconds() {
@@ -456,6 +395,10 @@ public class GUI extends JPanel implements ActionListener {
 	public int getMazeSizeMultiplier() {
 		JSlider slider = (JSlider) NavElementID.JSlider_mazeSizeMultiplier.getjComponent();
 		return slider.getValue();
+	}
+
+	public MazeJPanel getMazeJPanel() {
+		return mazeJPanel;
 	}
 
 }
