@@ -4,13 +4,7 @@ import com.magnesiumm.configurationData.*;
 import com.magnesiumm.logic.LogicThread;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.io.File;
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
 import javax.swing.*;
 
 /**
@@ -61,6 +55,9 @@ public class GUI{
      */
     private MazeJPanel mazeJPanel;
     
+    /**
+     * The MenuActionListener for the active JComponents.
+     */
     private MenuActionListener menuActionListener;
     
     /**
@@ -104,6 +101,82 @@ public class GUI{
     }
     
     /**
+     * Draws the menu at the top of the window. Should only be called once.
+     */
+    public void drawMenu() {
+    	//Menu Bar
+    	JMenuBar menuBar = (JMenuBar) initJComponent(NavElementID.JMenuBar_menuBar);
+    	
+    	//Start Options Menu
+        JMenu options = (JMenu) initJComponent(NavElementID.JMenu_options);
+        //Speed Section
+        options.add(initJComponent(NavElementID.JLabel_speed));
+        options.add(initJComponent(NavElementID.JSlider_speed));
+        NavElementID.JSlider_speed.getjComponent().setPreferredSize(new Dimension(460, 16));
+        options.add(initJComponent(NavElementID.JMenuItem_realTime));
+        options.addSeparator();
+        //Generate Solve Delay Section
+        options.add(initJComponent(NavElementID.JLabel_generateSolveDelay));
+        options.add(initJComponent(NavElementID.JSlider_generateSolveDelay));
+        NavElementID.JSlider_generateSolveDelay.getjComponent().setPreferredSize(new Dimension(460, 16));
+        options.addSeparator();
+        //Reset Menu Item
+        options.add(initJComponent(NavElementID.JMenuItem_reset));
+        //End Options Menu
+        
+        //Start Mode Menu
+        JMenu mode = (JMenu) initJComponent(NavElementID.JMenu_mode);
+        ButtonGroup buttonGroupForMode = new ButtonGroup();
+        mode.add(initJComponent(NavElementID.JRadioButtonMenuItem_demoMode, buttonGroupForMode));
+        mode.add(initJComponent(NavElementID.JRadioButtonMenuItem_customMode, buttonGroupForMode));
+        //End Mode Menu
+        
+        
+        //Start Maze Menu
+        JMenu maze = (JMenu) initJComponent(NavElementID.JMenu_maze);
+        maze.add(initJComponent(NavElementID.JLabel_mazeSize));
+        maze.add(initJComponent(NavElementID.JSlider_mazeSizeMultiplier));
+        maze.addSeparator();
+        maze.add(initJComponent(NavElementID.JLabel_mazeFilePathLabel));
+        maze.add(initJComponent(NavElementID.JLabel_mazeFilePath));
+        maze.add(initJComponent(NavElementID.JMenuItem_changeMazeFilePath));
+        //End Maze Menu
+        
+        //Start Generation Menu
+        JMenu generation = (JMenu) initJComponent(NavElementID.JMenu_generation);
+        generation.setEnabled(false);
+        ButtonGroup buttonGroupForGeneration = new ButtonGroup();
+        generation.add(initJComponent(NavElementID.JRadioButtonMenuItem_dfsRandomGeneration, buttonGroupForGeneration));
+        //End Generation Menu
+        
+        
+        //Start Solve Menu
+        JMenu solve = (JMenu) initJComponent(NavElementID.JMenu_solve);
+        solve.setEnabled(false);
+        ButtonGroup buttonGroupForSolve = new ButtonGroup();
+        solve.add(initJComponent(NavElementID.JRadioButtonMenuItem_dfsSolve, buttonGroupForSolve));
+        solve.add(initJComponent(NavElementID.JRadioButtonMenuItem_bfsSolve, buttonGroupForSolve));
+        //End Solve Menu
+        
+        //Start Go Button
+        JToggleButton go = (JToggleButton) initJComponent(NavElementID.JToggleButton_go);
+        go.registerKeyboardAction(go.getActionForKeyStroke(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0, true)), KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0, true), JComponent.WHEN_FOCUSED);
+        //End Go Button
+        
+        //Start Adding Menus to Menu Bar
+        menuBar.add(options);
+        menuBar.add(mode);
+        menuBar.add(maze);
+        menuBar.add(generation);
+        menuBar.add(solve);
+        menuBar.add(go);
+        //Start Adding Menus to Menu Bar
+        
+        //Set JFrame Menu Bar
+        frame.setJMenuBar(menuBar);
+    }
+    
+    /**
      * Adds a JComponent defined in NavElementID to our GUI.
      * @param id the NavElementID of the JComponent to be added.
      * @return The jComponent associated with the NavElementID.
@@ -129,63 +202,6 @@ public class GUI{
     	buttonGroup.add( (AbstractButton) jComponent);
     	return initJComponent(id);
     }
-    
-    /**
-     * Draws the menu at the top of the window. Should only be called once.
-     */
-    public void drawMenu() {
-    	JMenuBar menuBar = (JMenuBar) initJComponent(NavElementID.JMenuBar_menuBar);
-    	
-        JMenu options = (JMenu) initJComponent(NavElementID.JMenu_options);
-        options.add(initJComponent(NavElementID.JLabel_speed));
-        options.add(initJComponent(NavElementID.JSlider_speed));
-        NavElementID.JSlider_speed.getjComponent().setPreferredSize(new Dimension(460, 16));
-		//Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        options.add(initJComponent(NavElementID.JMenuItem_realTime));
-        options.addSeparator();
-        options.add(initJComponent(NavElementID.JLabel_generateSolveDelay));
-        options.add(initJComponent(NavElementID.JSlider_generateSolveDelay));
-        NavElementID.JSlider_generateSolveDelay.getjComponent().setPreferredSize(new Dimension(460, 16));
-        options.addSeparator();
-        options.add(initJComponent(NavElementID.JMenuItem_reset));
-        
-        JMenu mode = (JMenu) initJComponent(NavElementID.JMenu_mode);
-        ButtonGroup buttonGroupForMode = new ButtonGroup();
-        mode.add(initJComponent(NavElementID.JRadioButtonMenuItem_demoMode, buttonGroupForMode));
-        mode.add(initJComponent(NavElementID.JRadioButtonMenuItem_customMode, buttonGroupForMode));
-        
-        JMenu maze = (JMenu) initJComponent(NavElementID.JMenu_maze);
-        maze.add(initJComponent(NavElementID.JLabel_mazeSize));
-        maze.add(initJComponent(NavElementID.JSlider_mazeSizeMultiplier));
-        maze.addSeparator();
-        maze.add(initJComponent(NavElementID.JLabel_mazeFilePathLabel));
-        maze.add(initJComponent(NavElementID.JLabel_mazeFilePath));
-        maze.add(initJComponent(NavElementID.JMenuItem_changeMazeFilePath));
-        
-        JMenu generation = (JMenu) initJComponent(NavElementID.JMenu_generation);
-        generation.setEnabled(false);
-        ButtonGroup buttonGroupForGeneration = new ButtonGroup();
-        generation.add(initJComponent(NavElementID.JRadioButtonMenuItem_dfsRandomGeneration, buttonGroupForGeneration));
-        
-        JMenu solve = (JMenu) initJComponent(NavElementID.JMenu_solve);
-        solve.setEnabled(false);
-        ButtonGroup buttonGroupForSolve = new ButtonGroup();
-        solve.add(initJComponent(NavElementID.JRadioButtonMenuItem_dfsSolve, buttonGroupForSolve));
-        solve.add(initJComponent(NavElementID.JRadioButtonMenuItem_bfsSolve, buttonGroupForSolve));
-        
-        JToggleButton go = (JToggleButton) initJComponent(NavElementID.JToggleButton_go);
-        go.registerKeyboardAction(go.getActionForKeyStroke(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0, true)), KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0, true), JComponent.WHEN_FOCUSED);
-        
-        menuBar.add(options);
-        menuBar.add(mode);
-        menuBar.add(maze);
-        menuBar.add(generation);
-        menuBar.add(solve);
-        menuBar.add(go);
-        
-        frame.setJMenuBar(menuBar);
-    }
-    
     
     /**
      * Called when the display space of the frame needs to be reset.
