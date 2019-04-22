@@ -11,10 +11,9 @@ import java.io.IOException;
 import javax.swing.JLabel;
 
 /**
-* This main class is responsible for using all the other classes
-* in order to solve a maze. Being the main class, it is the class that starts the program.
-* The MazeSolver class often accesses an object of this class in order to repaint the GUI.
-* This class is also instantiated as a Thread in the control panel class.
+* This class is responsible for using all the other classes
+* in order to solve a maze.
+* This class is also instantiated as a Thread.
 * This is required is required because the java GUI Event Dispatch Thread needs to be free
 * in order to handle scheduled repaint events.
 *
