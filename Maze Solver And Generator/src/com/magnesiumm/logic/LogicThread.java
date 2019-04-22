@@ -1,10 +1,10 @@
 package com.magnesiumm.logic;
 
 import com.magnesiumm.Run;
+import com.magnesiumm.GUI.GUI;
+import com.magnesiumm.GUI.MazeJPanel;
+import com.magnesiumm.GUI.NavElementID;
 import com.magnesiumm.configurationData.*;
-import com.magnesiumm.gui.GUI;
-import com.magnesiumm.gui.MazeJPanel;
-import com.magnesiumm.gui.NavElementID;
 
 import java.awt.Dimension;
 import java.io.IOException;

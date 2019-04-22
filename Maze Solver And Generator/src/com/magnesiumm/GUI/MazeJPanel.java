@@ -1,4 +1,4 @@
-package com.magnesiumm.gui;
+package com.magnesiumm.GUI;
 
 import java.awt.Color;
 import java.awt.Graphics;

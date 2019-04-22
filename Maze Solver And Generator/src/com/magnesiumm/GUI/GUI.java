@@ -1,4 +1,4 @@
-package com.magnesiumm.gui;
+package com.magnesiumm.GUI;
 
 import com.magnesiumm.configurationData.*;
 import com.magnesiumm.logic.LogicThread;

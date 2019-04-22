@@ -1,6 +1,6 @@
 package com.magnesiumm;
 
-import com.magnesiumm.gui.GUI;
+import com.magnesiumm.GUI.GUI;
 
 public class Run {
 	

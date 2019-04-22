@@ -1,4 +1,4 @@
-package com.magnesiumm.gui;
+package com.magnesiumm.GUI;
 
 import javax.swing.JComponent;
 import javax.swing.JLabel;
