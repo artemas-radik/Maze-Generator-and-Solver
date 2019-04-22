@@ -10,6 +10,7 @@ import java.awt.Dimension;
 import java.io.IOException;
 
 import javax.swing.JLabel;
+import javax.swing.JSlider;
 
 /**
 * This class is responsible for using all the other classes
@@ -37,28 +38,26 @@ public class LogicThread extends Thread{
 			Mode mode = Run.getGUI().getMode();
 			JLabel label = (JLabel) NavElementID.JLabel_mazeFilePath.getjComponent();
 			String currentMazeFilePath = label.getText();
-			
-			switch(mode) {
-			
-				case Demo_Mode:
-					GenerationAlgorithm[] generationAlgorithms = GenerationAlgorithm.values();
-					SolveAlgorithm[] solveAlgorithms = SolveAlgorithm.values();
-					while(true) {
+			GUI gui = Run.getGUI();
+			while(true) { 
+				switch(mode) {
+				
+					case Demo_Mode:
+						GenerationAlgorithm[] generationAlgorithms = GenerationAlgorithm.values();
+						SolveAlgorithm[] solveAlgorithms = SolveAlgorithm.values();
 						GenerationAlgorithm randomGenerationAlgorithm = generationAlgorithms[(int) (Math.random() * generationAlgorithms.length)];
 						SolveAlgorithm randomSolveAlgorithm = solveAlgorithms[(int) (Math.random() * solveAlgorithms.length)];
 						startMazeSolving(randomGenerationAlgorithm, randomSolveAlgorithm, currentMazeFilePath);
-					}
-				
-				case Custom_Mode:
-					GUI gui = Run.getGUI();
-					while(true) {
+					
+					case Custom_Mode:
 						startMazeSolving(gui.getGenerationAlgorithm(), gui.getSolveAlgorithm(), currentMazeFilePath);
-					}
-				
-			default:
-				break;
-			}			
-			
+					
+				default:
+					break;
+				}	
+				JSlider slider = (JSlider) NavElementID.JSlider_generateSolveDelay.getjComponent();
+				Thread.sleep(slider.getValue());
+			}
 			//startMazeSolving();
 		} catch (InterruptedException | IOException e) {
 			e.printStackTrace();
@@ -93,6 +92,7 @@ public class LogicThread extends Thread{
 				
 				}
 				maze = new Maze(GUI.generatedMazeFilePath);
+				Thread.sleep(Run.getGUI().getGenerateSolveDelay());
 				break;
 				
 			default:

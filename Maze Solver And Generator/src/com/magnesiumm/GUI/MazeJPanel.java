@@ -16,15 +16,15 @@ public class MazeJPanel extends JPanel {
 	private GUI gui;
 	
 	/**
-	 * This value represents the maze which the GUI is representing.
-	 */
-	private Maze maze;
-	
-	/**
      * value={@value buffer}; This value represents the buffer of space
      * on all sides of the GUI maze area, in pixels.
      */ 
 	public static final int buffer = 6;
+	
+	/**
+	 * This value represents the maze which the GUI is representing.
+	 */
+	private Maze maze;
 	
 	public MazeJPanel(GUI gui) {
 		this.gui = gui;

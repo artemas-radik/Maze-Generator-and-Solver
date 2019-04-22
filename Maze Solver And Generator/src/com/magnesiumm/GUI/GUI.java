@@ -23,7 +23,7 @@ import javax.swing.*;
 * @author  AJ Radik and Victoria Vigorito
 * @version 5.0 
 */
-public class GUI implements ActionListener {
+public class GUI{
 	
 	/**
 	 * value={@value title}; This value represents the default title of the window.
@@ -61,10 +61,7 @@ public class GUI implements ActionListener {
      */
     private MazeJPanel mazeJPanel;
     
-    /**
-     * Denotes whether easter egg has been triggered. Can only happen once.
-     */
-    private boolean easterEggTriggered = false;
+    private MenuActionListener menuActionListener;
     
     /**
      * Used to tell paintComponent that it is reset time.
@@ -82,6 +79,7 @@ public class GUI implements ActionListener {
      * will be responsible for displaying.
      */   
     public GUI() {
+       menuActionListener = new MenuActionListener();   
        currentLogicThread = new LogicThread();
        currentLogicThread.start();
        currentLogicThread.suspend();
@@ -114,7 +112,7 @@ public class GUI implements ActionListener {
     	JComponent jComponent = id.getjComponent();
     	
     	if(jComponent instanceof AbstractButton) {
-    		( (AbstractButton) jComponent).addActionListener(this);
+    		( (AbstractButton) jComponent).addActionListener(menuActionListener);
     	}
     	
     	return jComponent;
@@ -141,9 +139,13 @@ public class GUI implements ActionListener {
         JMenu options = (JMenu) initJComponent(NavElementID.JMenu_options);
         options.add(initJComponent(NavElementID.JLabel_speed));
         options.add(initJComponent(NavElementID.JSlider_speed));
-		NavElementID.JSlider_speed.getjComponent().setPreferredSize(new Dimension(460, 16));
+        NavElementID.JSlider_speed.getjComponent().setPreferredSize(new Dimension(460, 16));
 		//Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         options.add(initJComponent(NavElementID.JMenuItem_realTime));
+        options.addSeparator();
+        options.add(initJComponent(NavElementID.JLabel_generateSolveDelay));
+        options.add(initJComponent(NavElementID.JSlider_generateSolveDelay));
+        NavElementID.JSlider_generateSolveDelay.getjComponent().setPreferredSize(new Dimension(460, 16));
         options.addSeparator();
         options.add(initJComponent(NavElementID.JMenuItem_reset));
         
@@ -250,96 +252,6 @@ public class GUI implements ActionListener {
     	}
     	return null;
     }
-    
-    /**
-     * Handles actions on nav items.
-     * @param e The ActionEvent to be handled
-     */
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		AbstractButton source = (AbstractButton) e.getSource();
-		NavElementID navElementID = getNavElementIDfromJComponent(source);
-
-		switch(navElementID) {
-			
-			case JMenuItem_realTime:
-				//easter egg
-				if(!easterEggTriggered) {
-					makeGoState(true);
-					new Thread(new Runnable() {
-					    public void run() {
-					    	try {
-					    		AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(musicFilePath).getAbsoluteFile());
-						        Clip clip = AudioSystem.getClip();
-						        clip.open(audioInputStream);
-						        clip.start();
-						        Thread.sleep(clip.getMicrosecondLength()/1000);
-						    } catch(Exception e) {
-						        e.printStackTrace();
-						    }
-					    }
-					  }).start();
-					easterEggTriggered = true;
-				}
-				
-				JSlider speedSlider = (JSlider) NavElementID.JSlider_speed.getjComponent();
-				
-				if(!realTime) {
-					speedSlider.setEnabled(false);
-					realTime = true;
-			    }
-			    
-				else if(realTime) {
-			    	speedSlider.setEnabled(true);
-			    	realTime = false;
-			    }
-				break;
-			
-			case JMenuItem_reset:
-				reset();
-				break;
-			
-			case JRadioButtonMenuItem_demoMode:
-				NavElementID.JMenu_generation.getjComponent().setEnabled(false);
-				NavElementID.JMenu_solve.getjComponent().setEnabled(false);
-				break;
-			
-			case JRadioButtonMenuItem_customMode:
-				NavElementID.JMenu_generation.getjComponent().setEnabled(true);
-				NavElementID.JMenu_solve.getjComponent().setEnabled(true);
-				break;
-			
-			case JMenuItem_changeMazeFilePath:
-				JLabel label = (JLabel) NavElementID.JLabel_mazeFilePath.getjComponent();
-//				String currentMazeFilePath = label.getText();
-				String newMazeFilePath = JOptionPane.showInputDialog(source.getText() + " - For a randomly generated maze allow for default path: \""+generatedMazeFilePath+"\"", generatedMazeFilePath);
-				label.setText(newMazeFilePath);
-				break;
-				
-			case JToggleButton_go:
-				String sourceText = source.getText();
-				if(sourceText.equals("Go")) {
-					//Go clicked
-					NavElementID.JMenu_maze.getjComponent().setEnabled(false);
-					NavElementID.JMenu_mode.getjComponent().setEnabled(false);
-					NavElementID.JMenu_generation.getjComponent().setEnabled(false);
-					NavElementID.JMenu_solve.getjComponent().setEnabled(false);
-					source.setSelected(true);
-					source.setText("Stop");
-					currentLogicThread.resume();
-				}
-				else if(sourceText.equals("Stop")) {
-					//Stop clicked
-					source.setSelected(false);
-					source.setText("Go");
-					currentLogicThread.suspend();
-				}
-				break;
-			
-			default:
-				break;
-		}
-	}
 	
     public NavElementID getSelectedNavElementIDinMenu(NavElementID menuNavElementID) {
 		JMenu menu = (JMenu) menuNavElementID.getjComponent();
@@ -392,6 +304,11 @@ public class GUI implements ActionListener {
 		return (SolveAlgorithm) selected.getConfigurationData();
 	}
 
+	public int getGenerateSolveDelay() {
+		JSlider slider = (JSlider) NavElementID.JSlider_generateSolveDelay.getjComponent();
+		return slider.getValue();
+	}
+	
 	public int getMazeSizeMultiplier() {
 		JSlider slider = (JSlider) NavElementID.JSlider_mazeSizeMultiplier.getjComponent();
 		return slider.getValue();
@@ -399,6 +316,22 @@ public class GUI implements ActionListener {
 
 	public MazeJPanel getMazeJPanel() {
 		return mazeJPanel;
+	}
+
+	public boolean isRealTime() {
+		return realTime;
+	}
+
+	public void setRealTime(boolean realTime) {
+		this.realTime = realTime;
+	}
+
+	public Thread getCurrentLogicThread() {
+		return currentLogicThread;
+	}
+
+	public void setCurrentLogicThread(Thread currentLogicThread) {
+		this.currentLogicThread = currentLogicThread;
 	}
 
 }
