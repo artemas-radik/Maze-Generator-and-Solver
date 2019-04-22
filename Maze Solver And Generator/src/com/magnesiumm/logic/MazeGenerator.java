@@ -3,6 +3,7 @@ package com.magnesiumm.logic;
 import java.io.IOException;
 import java.util.LinkedList;
 
+import com.magnesiumm.Run;
 import com.magnesiumm.GUI.GUI;
 
 /**
@@ -17,7 +18,6 @@ import com.magnesiumm.GUI.GUI;
 */
 public class MazeGenerator {
 	
-	private GUI gui;
 	private String filePath;
 	private Maze maze;
 	private Node[][] nodes;
@@ -37,14 +37,13 @@ public class MazeGenerator {
 				nodes[row][col] = new Node(Node.wall, row, col);
 			}
 		}
-		
-		this.gui = gui;
-		this.gui.getMazeJPanel().setMaze(maze);
+	
+		Run.getGUI().getMazeJPanel().setMaze(maze);
 		startNode = nodes[1][0];
 	}
 	
 	public void DFSgenerate() throws IOException, InterruptedException {
-		gui.getFrame().setTitle(GUI.defaultTitle+" - DFS Random Generation");
+		Run.getGUI().getFrame().setTitle(GUI.defaultTitle+" - DFS Random Generation");
 		DFSgenerateRecursive(startNode, nodes);
 		startNode.setState(Node.startNode);
 		setEndNode(nodes);
@@ -53,12 +52,12 @@ public class MazeGenerator {
 	
 	public void DFSgenerateRecursive(Node current, Node[][] nodes) throws InterruptedException {
 		
-		gui.getMazeJPanel().repaint();
+		Run.getGUI().getMazeJPanel().repaint();
 		current.setCurrentNode(true);
 		Node middle = getMiddleNode(current, current.getParent(), nodes);
 		middle.setState(Node.pathNode);
-		Thread.sleep(gui.getDelayInMilliseconds());
-		gui.getMazeJPanel().repaint();
+		Thread.sleep(Run.getGUI().getDelayInMilliseconds());
+		Run.getGUI().getMazeJPanel().repaint();
 		LinkedList<Node> selection = getNeighbors(current, nodes);
 		
 		while(selection.size() > 0) {
@@ -74,8 +73,8 @@ public class MazeGenerator {
 		middle.setCurrentNode(true);
 		current.setCurrentNode(false);
 		current.setState(Node.empty);
-		Thread.sleep(gui.getDelayInMilliseconds());
-		gui.getMazeJPanel().repaint();
+		Thread.sleep(Run.getGUI().getDelayInMilliseconds());
+		Run.getGUI().getMazeJPanel().repaint();
 		middle.setCurrentNode(false);
 		middle.setState(Node.empty);
 	}
@@ -164,16 +163,6 @@ public class MazeGenerator {
 		int newRow = (row1 + row2) / 2;
 		int newCol = (col1 + col2) / 2;
 		return nodes[newRow][newCol];
-	}
-	
-	/**
-	 * This method gets the GUI object from this class
-	 * for other classes to use.
-	 * @return GUI This returns the GUI object being used
-	 * by the program - used for repainting / updating.
-	 */
-	public GUI getGUI() {
-		return gui;
 	}
 
 }

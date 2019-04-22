@@ -1,6 +1,9 @@
 package com.magnesiumm.GUI;
 
 import com.magnesiumm.configurationData.*;
+import com.magnesiumm.configurationData.actualData.GenerationAlgorithm;
+import com.magnesiumm.configurationData.actualData.Mode;
+import com.magnesiumm.configurationData.actualData.SolveAlgorithm;
 import com.magnesiumm.logic.LogicThread;
 
 import java.awt.*;
@@ -85,7 +88,7 @@ public class GUI{
        ImageIcon icon = new ImageIcon(iconFilePath);
        frame.setIconImage(icon.getImage());
        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-       mazeJPanel = new MazeJPanel(this);
+       mazeJPanel = new MazeJPanel();
        frame.add(mazeJPanel);
        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
        int minimizedWidth = (int) (screenSize.getWidth() * 0.6);

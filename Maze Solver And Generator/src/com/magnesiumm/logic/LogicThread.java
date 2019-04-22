@@ -4,7 +4,9 @@ import com.magnesiumm.Run;
 import com.magnesiumm.GUI.GUI;
 import com.magnesiumm.GUI.MazeJPanel;
 import com.magnesiumm.GUI.NavElementID;
-import com.magnesiumm.configurationData.*;
+import com.magnesiumm.configurationData.actualData.GenerationAlgorithm;
+import com.magnesiumm.configurationData.actualData.Mode;
+import com.magnesiumm.configurationData.actualData.SolveAlgorithm;
 
 import java.awt.Dimension;
 import java.io.IOException;
@@ -38,27 +40,24 @@ public class LogicThread extends Thread{
 			Mode mode = Run.getGUI().getMode();
 			JLabel label = (JLabel) NavElementID.JLabel_mazeFilePath.getjComponent();
 			String currentMazeFilePath = label.getText();
-			GUI gui = Run.getGUI();
+			GenerationAlgorithm[] generationAlgorithms = GenerationAlgorithm.values();
+			SolveAlgorithm[] solveAlgorithms = SolveAlgorithm.values();
 			while(true) { 
 				switch(mode) {
 				
 					case Demo_Mode:
-						GenerationAlgorithm[] generationAlgorithms = GenerationAlgorithm.values();
-						SolveAlgorithm[] solveAlgorithms = SolveAlgorithm.values();
 						GenerationAlgorithm randomGenerationAlgorithm = generationAlgorithms[(int) (Math.random() * generationAlgorithms.length)];
 						SolveAlgorithm randomSolveAlgorithm = solveAlgorithms[(int) (Math.random() * solveAlgorithms.length)];
 						startMazeSolving(randomGenerationAlgorithm, randomSolveAlgorithm, currentMazeFilePath);
 					
 					case Custom_Mode:
-						startMazeSolving(gui.getGenerationAlgorithm(), gui.getSolveAlgorithm(), currentMazeFilePath);
+						startMazeSolving(Run.getGUI().getGenerationAlgorithm(), Run.getGUI().getSolveAlgorithm(), currentMazeFilePath);
 					
 				default:
 					break;
 				}	
-				JSlider slider = (JSlider) NavElementID.JSlider_generateSolveDelay.getjComponent();
-				Thread.sleep(slider.getValue());
+				//why wasn't delay working here before
 			}
-			//startMazeSolving();
 		} catch (InterruptedException | IOException e) {
 			e.printStackTrace();
 		}
@@ -116,7 +115,7 @@ public class LogicThread extends Thread{
 			default:
 				break;
 		}	
-		
+		Thread.sleep(Run.getGUI().getGenerateSolveDelay());
 	}
 	
 	/**

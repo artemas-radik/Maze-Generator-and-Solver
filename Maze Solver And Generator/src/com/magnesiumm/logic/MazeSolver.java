@@ -2,6 +2,7 @@ package com.magnesiumm.logic;
 
 import java.util.LinkedList;
 
+import com.magnesiumm.Run;
 import com.magnesiumm.GUI.GUI;
 
 /**
@@ -23,7 +24,6 @@ public class MazeSolver {
 	 * This is used in order to access the GUI, for repaints. 
 	 * NOTE: change GUI to static?
 	 */
-	private GUI gui;
 	private Maze maze;
 	
 	/**
@@ -35,8 +35,7 @@ public class MazeSolver {
 	 */
 	public MazeSolver(GUI gui, Maze maze) {
 		this.maze = maze;
-		this.gui = gui;
-		this.gui.getMazeJPanel().setMaze(this.maze);
+		Run.getGUI().getMazeJPanel().setMaze(this.maze);
 	}
 	
 	/**
@@ -65,7 +64,7 @@ public class MazeSolver {
 	 * @see InterruptedException
 	 */
 	public LinkedList<Node> DFS() throws InterruptedException {
-		gui.getFrame().setTitle(GUI.defaultTitle+" - DFS");
+		Run.getGUI().getFrame().setTitle(GUI.defaultTitle+" - DFS");
 		Node startNode = getStartNode(maze.getNodes());
 		DFSrecursive(startNode, maze.getNodes()); // Return of node not needed?
 		return getResultPath();
@@ -84,8 +83,8 @@ public class MazeSolver {
 	public Node DFSrecursive(Node current, Node[][] nodes) throws InterruptedException {
 		
 		current.setCurrentNode(true);
-		gui.getMazeJPanel().repaint();
-		Thread.sleep(gui.getDelayInMilliseconds());
+		Run.getGUI().getMazeJPanel().repaint();
+		Thread.sleep(Run.getGUI().getDelayInMilliseconds());
 		
 		if(current.getState() == Node.endNode) {
 			return current;
@@ -135,7 +134,7 @@ public class MazeSolver {
 	 * @see InterruptedException
 	 */
 	public LinkedList<Node> BFS() throws InterruptedException {
-		gui.getFrame().setTitle(GUI.defaultTitle+" - BFS");
+		Run.getGUI().getFrame().setTitle(GUI.defaultTitle+" - BFS");
 		Node[][] nodes = maze.getNodes();
 		LinkedList<Node> queue = new LinkedList<Node>();
 		Node startNode = getStartNode(nodes);
@@ -145,8 +144,8 @@ public class MazeSolver {
 			Node current = queue.poll();
 			current.setCurrentNode(true);
 			
-			gui.getMazeJPanel().repaint();
-			Thread.sleep(gui.getDelayInMilliseconds());
+			Run.getGUI().getMazeJPanel().repaint();
+			Thread.sleep(Run.getGUI().getDelayInMilliseconds());
 			
 			if(current.getState() == Node.endNode) {
 				return getResultPath();
@@ -251,24 +250,15 @@ public class MazeSolver {
 			if(!(current.getState() == Node.endNode || current.getState() == Node.startNode)) {
 				current.setState(Node.pathNode);
 			}
-			gui.getMazeJPanel().repaint();
-			Thread.sleep(gui.getDelayInMilliseconds());
+			Run.getGUI().getMazeJPanel().repaint();
+			Thread.sleep(Run.getGUI().getDelayInMilliseconds());
 			current.setCurrentNode(false);
 			current = current.getParent();
 		}
 		current.setState(Node.pathNode);
-		gui.getMazeJPanel().repaint();
+		Run.getGUI().getMazeJPanel().repaint();
 		endPath.addFirst(current);
 		return endPath;		
 	}
 	
-	/**
-	 * This method gets the GUI object from this class
-	 * for other classes to use.
-	 * @return GUI This returns the GUI object being used
-	 * by the program - used for repainting / updating.
-	 */
-	public GUI getGUI() {
-		return gui;
-	}
 }

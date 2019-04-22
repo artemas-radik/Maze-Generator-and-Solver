@@ -8,12 +8,11 @@ import java.awt.geom.Rectangle2D;
 
 import javax.swing.JPanel;
 
+import com.magnesiumm.Run;
 import com.magnesiumm.logic.Maze;
 import com.magnesiumm.logic.Node;
 
 public class MazeJPanel extends JPanel {
-	
-	private GUI gui;
 	
 	/**
      * value={@value buffer}; This value represents the buffer of space
@@ -25,10 +24,6 @@ public class MazeJPanel extends JPanel {
 	 * This value represents the maze which the GUI is representing.
 	 */
 	private Maze maze;
-	
-	public MazeJPanel(GUI gui) {
-		this.gui = gui;
-	}
 	
 	/**
      * This method is responsible for drawing the maze
@@ -49,9 +44,9 @@ public class MazeJPanel extends JPanel {
         	return;
         }
         
-        if(gui.isReset()) {
+        if(Run.getGUI().isReset()) {
         	graphics2D.clearRect(0, 0, width, height);
-        	gui.setReset(true);
+        	Run.getGUI().setReset(true);
         }
         
         Node[][] nodes = maze.getNodes();

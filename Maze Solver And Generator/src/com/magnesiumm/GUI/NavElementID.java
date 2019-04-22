@@ -10,6 +10,9 @@ import javax.swing.JSlider;
 import javax.swing.JToggleButton;
 
 import com.magnesiumm.configurationData.*;
+import com.magnesiumm.configurationData.actualData.GenerationAlgorithm;
+import com.magnesiumm.configurationData.actualData.Mode;
+import com.magnesiumm.configurationData.actualData.SolveAlgorithm;
 
 public enum NavElementID {
 	//ensures every NavElementID has a JComponent, plus init values
