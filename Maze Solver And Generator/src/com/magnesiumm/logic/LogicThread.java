@@ -3,16 +3,12 @@ package com.magnesiumm.logic;
 import com.magnesiumm.Run;
 import com.magnesiumm.GUI.GUI;
 import com.magnesiumm.GUI.MazeJPanel;
-import com.magnesiumm.GUI.NavElementID;
 import com.magnesiumm.configurationData.actualData.GenerationAlgorithm;
 import com.magnesiumm.configurationData.actualData.Mode;
 import com.magnesiumm.configurationData.actualData.SolveAlgorithm;
-
 import java.awt.Dimension;
 import java.io.IOException;
 
-import javax.swing.JLabel;
-import javax.swing.JSlider;
 
 /**
 * This class is responsible for using all the other classes
@@ -38,25 +34,28 @@ public class LogicThread extends Thread{
 	public void run() {
 		try {
 			Mode mode = Run.getGUI().getMode();
-			JLabel label = (JLabel) NavElementID.JLabel_mazeFilePath.getjComponent();
-			String currentMazeFilePath = label.getText();
+			String currentMazeFilePath = Run.getGUI().getCurrentMazeFilePath();
 			GenerationAlgorithm[] generationAlgorithms = GenerationAlgorithm.values();
 			SolveAlgorithm[] solveAlgorithms = SolveAlgorithm.values();
 			while(true) { 
 				switch(mode) {
 				
+				//must have breaks or else code will "fall through" -- after first case is found all other cases will execute
+				
 					case Demo_Mode:
 						GenerationAlgorithm randomGenerationAlgorithm = generationAlgorithms[(int) (Math.random() * generationAlgorithms.length)];
 						SolveAlgorithm randomSolveAlgorithm = solveAlgorithms[(int) (Math.random() * solveAlgorithms.length)];
 						startMazeSolving(randomGenerationAlgorithm, randomSolveAlgorithm, currentMazeFilePath);
+						break;
 					
 					case Custom_Mode:
 						startMazeSolving(Run.getGUI().getGenerationAlgorithm(), Run.getGUI().getSolveAlgorithm(), currentMazeFilePath);
-					
+						break;
+						
 				default:
 					break;
-				}	
-				//why wasn't delay working here before
+				}
+				//why wasn't delay working here before // ^
 			}
 		} catch (InterruptedException | IOException e) {
 			e.printStackTrace();

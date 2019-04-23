@@ -352,5 +352,10 @@ public class GUI{
 	public void setCurrentLogicThread(Thread currentLogicThread) {
 		this.currentLogicThread = currentLogicThread;
 	}
+	
+	public String getCurrentMazeFilePath() {
+		JLabel label = (JLabel) NavElementID.JLabel_mazeFilePath.getjComponent();
+		return label.getText();
+	}
 
 }
