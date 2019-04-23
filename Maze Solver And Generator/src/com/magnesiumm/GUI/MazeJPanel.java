@@ -85,4 +85,8 @@ public class MazeJPanel extends JPanel {
 		this.maze = maze;
 	}
     
+    public Maze getMaze() {
+		return maze;
+	}
+    
 }

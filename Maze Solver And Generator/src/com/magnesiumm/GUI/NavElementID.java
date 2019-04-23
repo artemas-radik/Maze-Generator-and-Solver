@@ -29,6 +29,8 @@ public enum NavElementID {
 	//Generate Solve Delay Section
 	JLabel_generateSolveDelay(new JLabel("Delay inbetween generation and solve steps")),
 	JSlider_generateSolveDelay(new JSlider(JSlider.HORIZONTAL, 0, 12000, 0)),
+	//Save as menu item
+	JMenuItem_saveAs(new JMenuItem("Save As")),
 	//Reset Menu Item
 	JMenuItem_reset(new JMenuItem("Reset")),
 	//End Options Menu

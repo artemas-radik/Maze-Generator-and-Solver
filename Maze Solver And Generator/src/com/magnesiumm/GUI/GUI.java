@@ -33,7 +33,7 @@ public class GUI{
 	/**
 	 * value={@value generatedMazeFilePath}; This value represents the file path for the generated maze.
 	 */
-	public static final String generatedMazeFilePath = "resources/generatedMaze.txt";
+	public static final String generatedMazeFilePath = "generatedMaze.txt";
 	
 	/**
 	 * value={@value musicFilePath}; This value represents the file path for the duel of the fates easter egg music.
@@ -121,6 +121,8 @@ public class GUI{
         options.add(initJComponent(NavElementID.JSlider_generateSolveDelay));
         NavElementID.JSlider_generateSolveDelay.getjComponent().setPreferredSize(new Dimension(460, 16));
         options.addSeparator();
+        //Save As Menu Item
+        options.add(initJComponent(NavElementID.JMenuItem_saveAs));
         //Reset Menu Item
         options.add(initJComponent(NavElementID.JMenuItem_reset));
         //End Options Menu

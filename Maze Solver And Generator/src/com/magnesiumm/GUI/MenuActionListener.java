@@ -3,6 +3,8 @@ package com.magnesiumm.GUI;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.IOException;
+
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
@@ -64,6 +66,15 @@ public class MenuActionListener implements ActionListener{
 			    }
 				break;
 			
+			case JMenuItem_saveAs:
+				String saveFileName = JOptionPane.showInputDialog("Enter file name to save as:");
+				try {
+					Run.getFileOperations().writeNodes(saveFileName, Run.getGUI().getMazeJPanel().getMaze().getNodes());
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+				break;
+				
 			case JMenuItem_reset:
 				Run.getGUI().reset();
 				break;
