@@ -2,6 +2,8 @@ package com.magnesiumm.logic;
 
 import java.util.LinkedList;
 
+import com.magnesiumm.Run;
+
 /**
 * This class is responsible for representing a Maze,
 * that needs to be solved, by the program. It is used by the MazeSolver
@@ -23,10 +25,12 @@ public class Maze {
 	 * @param mazeFilePath the file path of the maze to be constructed.
 	 */
 	public Maze(String mazeFilePath) {
-		nodes = FileOperations.loadNodes(mazeFilePath);
+		nodes = Run.getFileOperations().loadNodes(mazeFilePath);
+		Run.getGUI().getMazeJPanel().setMaze(this);
+		Run.getGUI().getMazeJPanel().repaint();
 	}
 
-	public Maze(String filePath, int rows, int cols) {
+	public Maze(int rows, int cols) {
 		nodes = new Node[rows][cols];
 	}
 	

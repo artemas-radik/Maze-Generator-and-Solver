@@ -28,7 +28,7 @@ public class MazeGenerator {
 	public MazeGenerator(GUI gui, String filePath, int rows, int cols) {
 		this.filePath = filePath;
 		
-		maze = new Maze(filePath, rows, cols);
+		maze = new Maze(rows, cols);
 		
 		for(int row = 0; row < maze.getNodes().length; row++) {
 			for(int col = 0; col < maze.getNodes()[0].length; col++) {
@@ -45,7 +45,7 @@ public class MazeGenerator {
 		DFSgenerateRecursive(startNode, maze.getNodes());
 		startNode.setState(Node.startNode);
 		setEndNode(maze.getNodes());
-		FileOperations.writeNodes(filePath, maze.getNodes());
+		Run.getFileOperations().writeNodes(filePath, maze.getNodes());
 	}
 	
 	public void DFSgenerateRecursive(Node current, Node[][] nodes) throws InterruptedException {

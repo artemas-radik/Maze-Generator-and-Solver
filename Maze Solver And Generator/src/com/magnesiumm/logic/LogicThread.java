@@ -22,6 +22,8 @@ import java.io.IOException;
 */
 public class LogicThread extends Thread{
 	
+	public static final String solvedMazeExtension = "_SOLVED.txt";
+	
 	/**
 	 * This method is inherited from Thread.
 	 * It is called when a new thread of Main
@@ -95,6 +97,9 @@ public class LogicThread extends Thread{
 				
 			default:
 				maze = new Maze(mazeFilePath);
+				if(mazeFilePath.substring(mazeFilePath.length() - solvedMazeExtension.length()).equals(solvedMazeExtension)) {
+					return;
+				}
 				break;
 		
 		}	
@@ -114,6 +119,7 @@ public class LogicThread extends Thread{
 			default:
 				break;
 		}	
+		Run.getFileOperations().writeNodes(mazeFilePath + solvedMazeExtension, maze.getNodes());
 		Thread.sleep(Run.getGUI().getGenerateSolveDelay());
 	}
 	

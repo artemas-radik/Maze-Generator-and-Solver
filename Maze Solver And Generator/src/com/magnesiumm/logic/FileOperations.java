@@ -23,7 +23,7 @@ public class FileOperations {
 	 * @return Node[][] this returns a 2D array representation
 	 * of the nodes, loaded from the file path.
 	 */
-	public static Node[][] loadNodes(String fileName) {
+	public Node[][] loadNodes(String fileName) {
 		//read!!!!!!
 		try {
 			FileReader fileReader = new FileReader(fileName);
@@ -54,7 +54,7 @@ public class FileOperations {
 		return null;
 	}	
 	
-	public static void writeNodes(String fileName, Node[][] nodes) throws IOException {
+	public void writeNodes(String fileName, Node[][] nodes) throws IOException {
 		String toWrite = "";
 		for(int row = 0; row < nodes.length; row++) {
 			for(int col = 0; col < nodes[0].length; col++) {
