@@ -20,7 +20,6 @@ public class MazeGenerator {
 	
 	private String filePath;
 	private Maze maze;
-	private Node[][] nodes;
 	private Node startNode;
 	public static final int inSafeBounds = 2;
 	public static final int inBounds = 1;
@@ -30,28 +29,27 @@ public class MazeGenerator {
 		this.filePath = filePath;
 		
 		maze = new Maze(filePath, rows, cols);
-		nodes = maze.getNodes();
 		
-		for(int row = 0; row < nodes.length; row++) {
-			for(int col = 0; col < nodes[0].length; col++) {
-				nodes[row][col] = new Node(Node.wall, row, col);
+		for(int row = 0; row < maze.getNodes().length; row++) {
+			for(int col = 0; col < maze.getNodes()[0].length; col++) {
+				maze.getNodes()[row][col] = new Node(Node.wall, row, col);
 			}
 		}
 	
 		Run.getGUI().getMazeJPanel().setMaze(maze);
-		startNode = nodes[1][0];
+		startNode = maze.getNodes()[1][0];
 	}
 	
 	public void DFSgenerate() throws IOException, InterruptedException {
 		Run.getGUI().getFrame().setTitle(GUI.defaultTitle+" - DFS Random Generation");
-		DFSgenerateRecursive(startNode, nodes);
+		DFSgenerateRecursive(startNode, maze.getNodes());
 		startNode.setState(Node.startNode);
-		setEndNode(nodes);
-		FileOperations.writeNodes(filePath, nodes);
+		setEndNode(maze.getNodes());
+		FileOperations.writeNodes(filePath, maze.getNodes());
 	}
 	
 	public void DFSgenerateRecursive(Node current, Node[][] nodes) throws InterruptedException {
-		
+		startNode.setState(Node.startNode);
 		Run.getGUI().getMazeJPanel().repaint();
 		current.setCurrentNode(true);
 		Node middle = getMiddleNode(current, current.getParent(), nodes);
@@ -120,19 +118,8 @@ public class MazeGenerator {
 				if(farBounds == inSafeBounds) {
 					neighbors.add(far);
 				}
-//				else if(farBounds == inBounds) {
-//					Node close = directionalNodes.get(1);
-//					System.out.println(close.getCoordinateString());
-//					neighbors.add(directionalNodes.get(1));
-//				}
+
 			}
-//			else if(directionalNodes.size() == 1) {
-//				Node test = directionalNodes.get(0);
-//				if(testBounds(test.getRow(), test.getCol(), nodes) > onInternalEdge) {
-//					neighbors.add(test);
-//				}
-//
-//			}
 			
 		}
 		return neighbors;
@@ -152,7 +139,7 @@ public class MazeGenerator {
 	
 	public Node getMiddleNode(Node node1, Node node2, Node[][] nodes) {
 		if(node1==null || node2==null) {
-			return nodes[1][0];
+			return startNode;
 		}
 		
 		int row1 = node1.getRow();

@@ -40,7 +40,7 @@ public class LogicThread extends Thread{
 			while(true) { 
 				switch(mode) {
 				
-				//must have breaks or else code will "fall through" -- after first case is found all other cases will execute
+				//must have breaks or else code will "fall through" - after first case is found all other cases will execute - check https://docs.oracle.com/javase/tutorial/java/nutsandbolts/switch.html
 				
 					case Demo_Mode:
 						GenerationAlgorithm randomGenerationAlgorithm = generationAlgorithms[(int) (Math.random() * generationAlgorithms.length)];

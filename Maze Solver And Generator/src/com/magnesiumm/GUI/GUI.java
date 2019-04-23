@@ -1,11 +1,9 @@
 package com.magnesiumm.GUI;
 
-import com.magnesiumm.configurationData.*;
 import com.magnesiumm.configurationData.actualData.GenerationAlgorithm;
 import com.magnesiumm.configurationData.actualData.Mode;
 import com.magnesiumm.configurationData.actualData.SolveAlgorithm;
 import com.magnesiumm.logic.LogicThread;
-
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import javax.swing.*;

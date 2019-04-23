@@ -255,7 +255,6 @@ public class MazeSolver {
 			current.setCurrentNode(false);
 			current = current.getParent();
 		}
-		current.setState(Node.pathNode);
 		Run.getGUI().getMazeJPanel().repaint();
 		endPath.addFirst(current);
 		return endPath;		
