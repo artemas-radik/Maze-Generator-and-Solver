@@ -9,14 +9,10 @@ import java.awt.event.KeyEvent;
 import javax.swing.*;
 
 /**
-* The GUI class is responsible for displaying the 
-* maze-solving algorithms with a delay. An object of the GUI class will be stored
-* in an object of Main, and then it will also often be repainted in the MazeSolver
-* class by the maze-solving algorithms, in order to refresh the GUI and display
-* the algorithms at work.
+* The GUI class is responsible for the GUI menus.
 *
 * @author  AJ Radik and Victoria Vigorito
-* @version 5.0 
+* @version 6.0 
 */
 public class GUI{
 	

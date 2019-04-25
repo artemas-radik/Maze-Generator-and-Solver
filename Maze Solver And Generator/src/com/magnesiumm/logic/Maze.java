@@ -11,7 +11,7 @@ import com.magnesiumm.Run;
 * that represent the maze. It can also print the nodes as a method of troubleshooting.
 *
 * @author  AJ Radik and Victoria Vigorito
-* @version 5.0 
+* @version 6.0 
 */
 public class Maze {
 

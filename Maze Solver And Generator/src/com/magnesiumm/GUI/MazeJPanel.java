@@ -12,6 +12,12 @@ import com.magnesiumm.Run;
 import com.magnesiumm.logic.Maze;
 import com.magnesiumm.logic.Node;
 
+/**
+* This class handles the maze part of the GUI.
+*
+* @author  AJ Radik and Victoria Vigorito
+* @version 6.0 
+*/
 public class MazeJPanel extends JPanel {
 	
 	/**

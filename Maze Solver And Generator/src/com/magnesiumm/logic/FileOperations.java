@@ -11,7 +11,7 @@ import java.io.IOException;
 * the nodes into the maze using file I/O.
 *
 * @author  AJ Radik and Victoria Vigorito
-* @version 5.0 
+* @version 6.0 
 */
 public class FileOperations {
 

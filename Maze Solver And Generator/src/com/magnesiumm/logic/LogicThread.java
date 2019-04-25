@@ -18,7 +18,7 @@ import java.io.IOException;
 * in order to handle scheduled repaint events.
 *
 * @author  AJ Radik and Victoria Vigorito
-* @version 5.0 
+* @version 6.0 
 */
 public class LogicThread extends Thread{
 	

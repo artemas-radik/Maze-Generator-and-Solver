@@ -3,6 +3,12 @@ package com.magnesiumm;
 import com.magnesiumm.GUI.GUI;
 import com.magnesiumm.logic.FileOperations;
 
+/**
+* This class is run when program is run.
+*
+* @author  AJ Radik and Victoria Vigorito
+* @version 6.0 
+*/
 public class Run {
 	
 	private static GUI gui;

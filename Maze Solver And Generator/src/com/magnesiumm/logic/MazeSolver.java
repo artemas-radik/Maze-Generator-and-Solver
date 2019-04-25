@@ -15,7 +15,7 @@ import com.magnesiumm.GUI.GUI;
 * This class contains several helper methods as well.
 *
 * @author  AJ Radik and Victoria Vigorito
-* @version 5.0 
+* @version 6.0 
 */
 public class MazeSolver {
 

@@ -11,7 +11,7 @@ import java.awt.Color;
 * This class also determines which color to paint each node, based on various data points. 
 *
 * @author  AJ Radik and Victoria Vigorito
-* @version 5.0 
+* @version 6.0 
 */
 public class Node {
 

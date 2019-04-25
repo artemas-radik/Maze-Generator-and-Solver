@@ -14,6 +14,12 @@ import com.magnesiumm.configurationData.actualData.GenerationAlgorithm;
 import com.magnesiumm.configurationData.actualData.Mode;
 import com.magnesiumm.configurationData.actualData.SolveAlgorithm;
 
+/**
+* This enum represents a nav element.
+*
+* @author  AJ Radik and Victoria Vigorito
+* @version 6.0 
+*/
 public enum NavElementID {
 	//ensures every NavElementID has a JComponent, plus init values
 	

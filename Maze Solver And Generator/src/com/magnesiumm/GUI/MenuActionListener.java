@@ -15,6 +15,12 @@ import javax.swing.JSlider;
 
 import com.magnesiumm.Run;
 
+/**
+* This class is handles actions.
+*
+* @author  AJ Radik and Victoria Vigorito
+* @version 6.0 
+*/
 public class MenuActionListener implements ActionListener{
 
 	/**
