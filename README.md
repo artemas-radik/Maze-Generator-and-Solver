@@ -7,6 +7,11 @@ This project is a visualization of several simple graph-theory algorithms throug
 ## How do I start the program?
 
 Simply compile the files in the src folder. The main method is in com.magnesiumm.logic.Run
+Make sure to set the classpath. Make sure you are in magnesiumm directory.
+
+javac -cp "absolute classpath pointing to src folder" Run.java
+
+java -cp "absolute classpath pointing to src folder" com.magnesiumm.Run 
 
 ## What do the menus do?
 
